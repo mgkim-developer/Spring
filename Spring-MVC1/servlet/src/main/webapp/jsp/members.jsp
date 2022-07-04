@@ -6,7 +6,6 @@
     MemberRepository memberRepository = MemberRepository.getInstance();
     List<Member> members = memberRepository.findAll();
 %>
-
 <html>
 <head>
     <meta charset="UTF-8">
