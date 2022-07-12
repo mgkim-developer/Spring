@@ -33,7 +33,6 @@ public class SpringMemberControllerV3 {
         return "save-result";
     }
 
-    // /spring/v2/members
     @GetMapping
     public String members(Model model) {
 
