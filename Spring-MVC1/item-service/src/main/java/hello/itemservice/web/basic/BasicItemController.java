@@ -66,7 +66,7 @@ public class BasicItemController {
     }
 
 //    @PostMapping("/add")
-    public String addItemV3(@ModelAttribute Item item) { // @ModelAttribute에 name을 직접 넣지 않으면, 기본적으로 클래스명의 첫글자를 소문자로 바꿔서 @ModelAttribute에 넣어준다.
+    public String addItemV3(@ModelAttribute Item item) { // @ModelAttribute에 name을 직접 넣지 않으면, 기본적으로 클래스명의 첫글자를 소문자로 바꿔서(ex- Item -> item) @ModelAttribute에 넣어준다.
         itemRepository.save(item);
         return "basic/item";
     }
