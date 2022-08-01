@@ -71,10 +71,16 @@ public class BasicItemController {
         return "basic/item";
     }
 
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV4(Item item) { // @ModelAttribute를 생략할 수 있다 (String같이 단순 파라미터가 오면 @RequestParam이 자동적용되고, 이렇게 우리가 만든 Item 객체처럼 임의의 객체인 경우에는 @ModelAttribute가 적용된다.).
         itemRepository.save(item);
         return "basic/item";
+    }
+
+    @PostMapping("/add")
+    public String addItemV5(Item item) { // @ModelAttribute를 생략할 수 있다 (String같이 단순 파라미터가 오면 @RequestParam이 자동적용되고, 이렇게 우리가 만든 Item 객체처럼 임의의 객체인 경우에는 @ModelAttribute가 적용된다.).
+        itemRepository.save(item);
+        return "redirect:/basic/items/" + item.getId();
     }
 
     @GetMapping("/{itemId}/edit")
