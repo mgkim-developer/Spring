@@ -13,6 +13,6 @@ import lombok.Data;
 public class DeliveryCode {
 
     private String code;
-    private String diaplayName;
+    private String displayName;
 
 }
