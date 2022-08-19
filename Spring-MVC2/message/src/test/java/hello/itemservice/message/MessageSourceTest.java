@@ -20,7 +20,7 @@ public class MessageSourceTest {
     @Test
     void helloMessage() {
         String result = ms.getMessage("hello", null, null);
-        assertThat(result).isEqualTo("안녕");
+        assertThat(result).isEqualTo("hello");
     }
 
     @Test
@@ -38,13 +38,13 @@ public class MessageSourceTest {
     @Test
     void argumentMessage() {
         String message = ms.getMessage("hello.name", new Object[]{"Spring"}, null);
-        assertThat(message).isEqualTo("안녕 Spring");
+        assertThat(message).isEqualTo("hello Spring");
     }
 
     @Test
     void defaultLang() {
-        assertThat(ms.getMessage("hello", null, null)).isEqualTo("안녕");
-        assertThat(ms.getMessage("hello", null, Locale.KOREA)).isEqualTo("안녕");
+        assertThat(ms.getMessage("hello", null, null)).isEqualTo("hello");
+        assertThat(ms.getMessage("hello", null, Locale.ENGLISH)).isEqualTo("hello");
     }
 
     @Test
