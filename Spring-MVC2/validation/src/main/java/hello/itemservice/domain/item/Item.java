@@ -10,18 +10,18 @@ import javax.validation.constraints.NotNull;
 @Data
 public class Item {
 
-    @NotNull // 수정 요구사항
+    @NotNull(groups = UpdateCheck.class) // 수정 요구사항
     private Long id;
 
-    @NotBlank(message = "공백은 입력할 수 없습니다.")
+    @NotBlank(message = "공백은 입력할 수 없습니다.", groups = {SaveCheck.class, UpdateCheck.class})
     private String itemName;
 
-    @NotNull
-    @Range(min = 1000, max = 1000000)
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
+    @Range(min = 1000, max = 1000000, groups = {SaveCheck.class, UpdateCheck.class})
     private Integer price;
 
-    @NotNull
-//    @Max(9999) // 수정 요구사항 추가
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
+    @Max(value = 9999, groups = {SaveCheck.class}) // 수정 요구사항 추가
     private Integer quantity;
 
     public Item() {
