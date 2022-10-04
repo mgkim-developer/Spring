@@ -1,5 +1,7 @@
 package hello.exception.exhandler.advice;
 
+import hello.exception.api.ApiExceptionV2Controller;
+import hello.exception.api.ApiExceptionV3Controller;
 import hello.exception.exception.UserException;
 import hello.exception.exhandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice(basePackages = "hello.exception.api")
+@RestControllerAdvice(assignableTypes = {ApiExceptionV2Controller.class, ApiExceptionV3Controller.class})
 public class ExControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
