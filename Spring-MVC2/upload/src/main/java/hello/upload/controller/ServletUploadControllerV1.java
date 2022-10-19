@@ -18,7 +18,7 @@ import java.util.Collection;
 public class ServletUploadControllerV1 {
 
     @GetMapping("/upload")
-    public String newfile() {
+    public String newFile() {
         return "upload-form";
     }
 
