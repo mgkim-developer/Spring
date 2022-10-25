@@ -181,6 +181,7 @@
 > 
 > 컨트롤러에서 리턴 값으로 문자를 반환하면 뷰 리졸버(_**viewResolver**_)가 화면을 찾아서 처리합니다.   
 > 스프링 부트 템플릿엔진 기본 _**viewName**_ 매핑이 되며, _**resources:templates/+(ViewName)+.html**_ 입니다.   
+> 
 > ---
 > ## ✅ 빌드하고 실행하기
 > ![image](https://user-images.githubusercontent.com/66030601/197828613-c155c0c8-a794-4e05-a12c-e65cd00dbee0.png)   
