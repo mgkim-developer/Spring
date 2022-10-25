@@ -126,14 +126,14 @@
 >
 > 요즘에는 ***slf4j*** 와 ***logback*** 조합을 많이 사용합니다. 그래서 ***spring-boot-starter*** 에서 이 두개를 표준으로 가져옵니다.   
 >
-> ![image](https://user-images.githubusercontent.com/66030601/197788654-b4e68ffe-001d-46c2-bb68-9083ed7e15db.png)
->   
+> ![image](https://user-images.githubusercontent.com/66030601/197788654-b4e68ffe-001d-46c2-bb68-9083ed7e15db.png)   
+>
 > 이번에는 ***test*** 쪽을 살펴보겠습니다.   
 > 테스트를 할 때, java 진영에서는 ***junit*** 이라는 라이브러리를 사용합니다. 
 > 그래서 spring 에서도 ***junit*** 라이브러리를 사용합니다.    
 > ***test*** 부분에 다른 것들도 많이 있는데, ***assertj*** 라이브러리는 테스트를 편리하게 하도록 도와주는 라이브러리입니다.   
 >---
-> ##[✅ View 환경설정](https://github.com/mgyokim/Spring/commit/ad758650cbec3fd7e1e257e24606916804214d4c)
+> ## [✅ View 환경설정](https://github.com/mgyokim/Spring/commit/ad758650cbec3fd7e1e257e24606916804214d4c)
 > 이번에는 ***Welcome Page*** 을 만들어 보도록 하겠습니다.   
 >
 > ***SpringBoot*** 는 Spring생태계 자체를 감싸서 편리하게 사용할 수 있도록 도와줍니다.   
