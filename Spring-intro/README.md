@@ -417,9 +417,9 @@
 > 기능을 선언 할 것 입니다.    
 >    
 > _**save**_ 를 만듭니다. 회원을 저장하면, 저장된 회원이 반환됩니다.   
-> _**Optional<Member>findById(Long id);**_ 라고 해서 앞서 생성했던 _**id**_ 로 회원을 찾는 것을 만들 것입니다.   
-> 그리고 ***Optional<Member>findByName(String name);*** 은 _**name**_ 으로 회원을 찾는 기능입니다.   
-> _**List<Member>findAll();**_ 기능은 지금까지 저장된 모든 회원 리스트를 반환해줍니다.   
+> _**findById(Long id);**_ 라고 해서 앞서 생성했던 _**id**_ 로 회원을 찾는 것을 만들 것입니다.   
+> 그리고 ***findByName(String name);*** 은 _**name**_ 으로 회원을 찾는 기능입니다.   
+> _**findAll();**_ 기능은 지금까지 저장된 모든 회원 리스트를 반환해줍니다.   
 >    
 > _**Optional**_ 은 _**findById**_ 혹은 _**findByName**_ 을 가져오는데 이것이 _**Null**_ 일 수 도 있는데, 이때 ***Null*** 을 처리하는 방법중에,   
 > _**Null**_ 을 그대로 반환하는 것 보다 _**Optional**_ 이라는 것으로 감싸서 반환하는 방법을 선호합니다. java8에 들어가 있는 기능입니다.   
