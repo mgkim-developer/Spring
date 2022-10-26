@@ -47,7 +47,7 @@
 
 목차순으로 내용을 정리하였습니다.
 
-## 프로젝트 환경설정   
+# 프로젝트 환경설정   
 > ## [✅ 프로젝트 생성](https://github.com/mgyokim/Spring/commit/d4b13f2cc5ffe0b0c397dcaeac00ef40017517b9)   
 >    
 > https://start.spring.io 사이트를 이용하여 프로젝트를 생성했습니다.    
