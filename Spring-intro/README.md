@@ -237,7 +237,7 @@
 > 후순위로 _**resources**_ 폴더 내부에 있는 ***static/hello-static.html***을 찾습니다.   
 > 이러한 순서로 해당 파일을 찾으면, 웹브라우저에 반환을 해주는 것 입니다.   
 > ---
-> ##[✅ MVC와 템플릿 엔진](https://github.com/mgyokim/Spring/commit/d88c6b3f2bd8247bedd9dd084aa6484b1971a293)      
+> ## [✅ MVC와 템플릿 엔진](https://github.com/mgyokim/Spring/commit/d88c6b3f2bd8247bedd9dd084aa6484b1971a293)      
 > ***MVC*** 란, _**Model**_, _**View**_, ***Controller*** 의 약자입니다.   
 >    
 > ***View*** 는 화면을 그리는데에 모든 역량을 집중해야합니다.   
@@ -278,7 +278,7 @@
 > 이러한 템플릿 엔진에서는 변환을 해서 웹브라우저에 반환합니다.      
 > 참고로, ***@RequestParam*** 에 _**required=false**_ 옵션을 주게되면, 파라미터를 넘기는 것은 필수가 아니라 선택사항이 됩니다.   
 > ---
-> ##[✅ API](https://github.com/mgyokim/Spring/commit/50ecbd3e63642acd687e2237bcd344ae3285c527)   
+> ## [✅ API](https://github.com/mgyokim/Spring/commit/50ecbd3e63642acd687e2237bcd344ae3285c527)   
 > 정적 컨텐츠 방식을 제외하면,    
 > 앞서 살펴보았던 _**MVC**_ 방식처럼 _**View**_ 를 찾아서 템플릿 엔진을 통해서 화면을 랜더링하고, _**html**_ 로 변환해서 웹브라우저에 넘겨주는 방식이 있고,   
 > 그 다음 방법이 _**API**_ 를 사용하는 방법이 있습니다.   
