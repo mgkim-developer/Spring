@@ -665,7 +665,7 @@
 > 그리고 반환은 임의로 _**id**_ 를 반환하도록 작성하겠습니다.   
 >    
 > 그런데, 회원 가입을 할 때, 비즈니스 로직중에, "같은 이름이 잇는 중복 회원은 가입이 안된다."라는 조건이 있었습니다.     
-> <pre><code>Optional<Member> result = memberRepository.findByName(member.getName());   
+> <pre><code>Optional< Member > result = memberRepository.findByName(member.getName());   
 > result.ifPresent(m -> {
 >       throw new IllegalStateException("이미 존재하는 회원입니다.");   
 > } );</code></pre>
