@@ -648,7 +648,62 @@
 >    
 > ***    
 >     
+> ## [✅회원 서비스 개발](https://github.com/mgyokim/Spring/commit/a6e21760b4d9aa1afb962ab73c9c46e0b1648984)    
+> 이번에는 회원 서비스 클래스를 만들어 보도록 하겠습니다.   
+> 회원 서비스는, 회원 리포지토리와 도메인을 활용해서 실제 비즈니스 로직을 작성하는 것입니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198343127-c85fb81c-dcfb-40ee-b7f4-a6e17e6c9d0a.png)   
+> 우선, _**service**_ 라는 이름으로 패키지를 생성했습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198343305-1755f741-4a7f-4dcb-b8ed-8634d68dd84b.png)   
+> 그리고 여기에 _**MemberService**_ 라는 이름으로 클래스를 생성했습니다.   
+>    
+> 서비스 코드를 작성해보겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198343593-fef15970-1de4-4385-897e-95ba6b860c46.png)   
+> 일단, 회원 서비스를 만들려면, 회원 리포지토리가 있어야 합니다.    
+>     
+> 회원가입은, ***memberRepository*** 에 _**save()**_ 를 호출해주면 됩니다.   
+> 그리고 반환은 임의로 _**id**_ 를 반환하도록 작성하겠습니다.   
+>    
+> 그런데, 회원 가입을 할 때, 비즈니스 로직중에, "같은 이름이 잇는 중복 회원은 가입이 안된다."라는 조건이 있었습니다.     
+> <pre><code>Optional<Member> result = memberRepository.findByName(member.getName());   
+> result.ifPresent(m -> {
+>       throw new IllegalStateException("이미 존재하는 회원입니다.");   
+> } );</code></pre>
+> 그런데 이 코드처럼 _**Optional**_ 을 바로 반환하는 것은 권장하지 않습니다.   
+> <pre><code>memberRepository.findByName(member.getName());</code></pre>   
+> _**Optional< Member > result =**_ 을 없애면,   
+> 이 코드의 반환이 _**Optional**_ 이므로,   
+> 여기다가 바로 _**.ifPresent();**_ 가 들어갈 수 있습니다.   
+> <pre><code>memberRepository.findByName(member.getName())
+>        .ifPresent(m -> {
+>               throw new IllegalStateException("이미 존재하는 회원입니다.");
+>        } );</code></pre>   
+> 그래서 이렇게 수정해서 작성하는 것이 좋습니다.   
+>    
+> 그런데, 코드를 봤을 때, 뭔가 로직이 쭉 있으면, 이런 경우에는 메서드로 뽑는게 좋습니다.      
+> ![image](https://user-images.githubusercontent.com/66030601/198353485-87f7bf30-1cb1-4279-9da8-8dd8a854538c.png)   
+> _**validateDuplicateMember**_ 라는 이름으로 메서드 리팩토링을 해주었습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198354045-60b7dbd0-c03d-448e-ac08-e0f0bf4e4878.png)   
+> 이렇게 메서드로 뽑으면 좋은 점은,   
+> "아! _**join()**_ 을 하면, 중복 회원을 검증하고, 통과하면 저장하는구나!"라고 바로 이해할 수 있게 됩니다.   
+>    
+> 이번에는 전체 회원을 조회하는 기능도 만들어 보겠습니다.
+> ![image](https://user-images.githubusercontent.com/66030601/198355018-dbd420f4-244b-46d6-9fff-faa87123523a.png)    
+> _**memberRepository**_ 의 _**findAll()**_ 을 호출해서 반환합니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198355361-f4806d11-f86c-4c08-9b0a-195b47e91ff4.png)    
+> _**findOne**_ 은 _**memberId**_ 로 멤버를 찾는 기능입니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198357284-00bc7526-1678-42a1-9950-580beb3ab46a.png)   
+> 회원 서비스 클래스를 작성했습니다.   
+>    
+> 이제, 회원가입을 했을 때, 중복회원이면 오류가 발생하는지(_**IllegalStateException**_)이 터지는지, 검증을 해봐야 합니다.   
+>    
+> 검증하는 방법은 여러가지가 있지만,   
+> 제일 좋은 방법은, 테스트 케이스를 활용하는 방법입니다.   
 > 
+>
 ## --------------------------------------------------------
 --- 
 위의 목차순으로
