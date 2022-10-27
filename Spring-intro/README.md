@@ -481,12 +481,174 @@
 > ![image](https://user-images.githubusercontent.com/66030601/198063622-fee4b05f-d90d-4e16-9304-bf64cb464384.png)    
 > 간단하게 구현을 마쳤습니다.   
 > 이제, 이것들이 제대로 동작을 하는지 검증을 해봐야 합니다.      
-> 
+>      
 > 동작을 검증하는 좋은 방법이 테스트 케이스 작성을 하는 것입니다.   
-
-
-
-
+>    
+> ***    
+> 
+> ## [✅회원 리포지토리 테스트 케이스 작성](https://github.com/mgyokim/Spring/commit/50ecbd3e63642acd687e2237bcd344ae3285c527)    
+> 개발한 기능을 실행해서 테스트 할 때 자바의 _**main**_ 메서드를 통해서 실행하거나,   
+> 웹 어플리케이션의 컨트롤러를 통해서 해당 기능을 실행 해볼 수 있는데, 이러한 방법은 준비하고 실행하는데 오래 걸리고,   
+> 반복실행하기 어려우며, 여러 테스트를 한번에 실행하기 어렵다는 단점이 있습니다.   
+>    
+> 자바는 _**JUnit**_ 이라는 테스트 프레임워크로 테스트를 실행할 수 있습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198220387-09e43a39-1087-4d63-9dfb-7eed0be844a9.png)   
+> _**test**_ 폴더의 _**java**_ 의 _**hello**_ 의 _**hellospring**_ 폴더에 _**repository**_ 라는 이름의 패키지를 만들었습니다. (보통 테스트 패키지 이름은 기존 패키지와 동일하게 지정합니다.)   
+> ![image](https://user-images.githubusercontent.com/66030601/198220867-b022e99c-783c-48de-9569-0116f6bf2c07.png)   
+> 그리고 클래스를 생성해주는데, 테스트할 클래스이름 뒤에 _**test**_ 를 붙여서 이름을 지정해주는 것이 관례입니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198221204-cdd51fe5-c68f-4b5a-ad55-6302ddba55de.png)    
+> _**save()**_ 메서드를 테스트해 볼 것입니다. 앞에 _**@Test**_ 를 작성해줍니다. _**org.junit.jupiter.api**_ 를 _**import**_ 해줍니다.    
+> ![image](https://user-images.githubusercontent.com/66030601/198222553-a293395b-59d7-4704-ae9d-c94cc87f9baf.png)   
+> 저장이 잘 되는지 테스트를 해보기 위해 코드를 작성해보겠습니다.   
+> _**findById**_ 의 반환타입이 _**Optional**_ 입니다.   
+> _**Optional**_ 에서 값을 꺼낼 때는 _**get()**_ 을 이용합니다. (사실 ***get()*** 으로 바로 꺼내는 것이 좋은 방법은 아니지만, 테스트코드 같은 곳에서는 이렇게 꺼내도 됩니다.)   
+> ![image](https://user-images.githubusercontent.com/66030601/198223228-909a7e28-9df7-42ee-956d-6d5161f886f5.png)   
+> 그래서 이렇게 _**Member**_ 객체를 생성하고, 객체에 _**setName()**_ 으로 이름을 지정하고,   
+> _**repository**_ 에 _**save()**_ 로 _**member**_ 를 저장하고,   
+> _**result**_ 로 값을 꺼내도록 했습니다.    
+>    
+> 이제 검증을 해보겠습니다.   
+>    
+> _**new**_ 로 생성한 _**member**_ 객체와 _**db**_ 에서 꺼낸 것이 똑같으면, _**true**_ 라고 할 수 있습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198224918-75ad04a1-e6d2-49e5-ba8b-9f5294cc9376.png)   
+> 단순하게 이렇게 할 수도 있습니다.    
+> _**result == member**_ 인지 출력해보겠습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198225283-6f48f752-e923-4cf9-84a2-ec8aca8b4c2e.png)   
+> _**result**_ 랑 _**member**_ 가 같은지 테스트 했을 때, ***result = true*** 가 나왔습니다.   
+>    
+> 그런데, 테스트 결과를 이렇게 계속 글자로 볼 수는 없습니다.   
+>    
+> 그래서 어떤 기능이 있냐면,   
+> _**Assert**_ 라는 기능이 있습니다. (***assert*** 는 _**Junit**_ 에서 가장 많이 이용되는 단정메서드입니다. 단정 메서드로 테스트 케이스의 수행결과를 판별합니다.)    
+>    
+> _**Assertions**_ 에 여러가지가 있습니다.   
+> _**org.junit.jupiter.api**_ 에서 제공하는 _**Assertions**_ 가 있는데,   
+> ![image](https://user-images.githubusercontent.com/66030601/198227122-5c68f2fe-c47d-45e4-bd43-68662ce1c3b6.png)   
+> 이렇게 사용해서 _**result**_ 와 _**member**_ 가 같은지를 확인해볼 수 있습니다.   
+>    
+> _**command + p**_ 로 옵션을 볼 수 있는데,    
+> ![image](https://user-images.githubusercontent.com/66030601/198227325-b7560b87-81a4-44f9-8d23-3d26220678f1.png)   
+> 이렇게 첫번째 파라미터에는 _**expected**_, 두번째 파라미터에는 _**actual**_ 을 적어줘야 합니다.   
+>    
+> 즉, _**save**_ 결과 _**result**_ 가 _**member**_ 와 같은지 테스트 하는 것이기 때문에, 
+> 기대값은 _**member**_ 이고, 실제 값은 _**result**_ 가 되는 것 입니다.   
+> 이것을 돌려보도록 하겠습니다.     
+> ![image](https://user-images.githubusercontent.com/66030601/198229068-3d1347a3-608b-4d7e-be10-f6bbbc17a745.png)   
+> 따로 출력되는 것은 없지만, _**TestResults**_ 옆에 녹색체크를 확인할 수 있습니다.      
+> 
+> ![image](https://user-images.githubusercontent.com/66030601/198229595-4f459a18-0446-4aaa-8554-ecd6130ba629.png)   
+> 만약에 기댓값과 실제값이 다르면 어떻게 될까요?   
+> 실제 값을 임의로 _**null**_ 로 지정해보겠습니다.   
+> 그리고 실행해 보았습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198230560-90f7bf9c-d25d-4a56-b570-2f69cbb113fb.png)   
+> 빨간불이 뜨면서 테스트에 실패했습니다. 즉, _**Test**_ 결과가 _**member**_ 와 실제값(_**null**_)이 같지 않다고 알려줍니다.   
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/198231961-33f900c8-9e71-4ea0-bcc9-810349957a6d.png)   
+> 그리고 요즈음에는 ***org.assertj.core.api*** 에서 제공하는 _**Assertions**_ 도 많이 사용합니다.   
+> _**Assertions**_ 를 좀더 편하게 사용할 수 있게 해줍니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198233958-c862f8a6-efec-41e2-918a-7d2ee6f045bf.png)   
+> _**Add on-damend static**_ 을 해주면,   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198234171-d6f4e5da-4192-4adf-be81-b5ed2a4a99c4.png)   
+> _**import**_ 문이 추가되면서 _**assertThat**_ 을 바로 사용할 수 있습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198234915-617f4ce6-0869-407a-b883-747c1daf3f2f.png)   
+> 이번에는 _**findByName()**_ 테스트 코드를 작성했습니다.   
+> 2명의 회원을 가입시켰고,   
+> 그중 이름이 _**spring1**_ 인 데이터를 대상으로 테스트를 진행했습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198236127-1c3c1334-72cb-4c1c-a283-fefb747f5a4f.png)    
+> 테스트 해보면, 성공한 것을 확인할 수 있습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198236496-c935e5bf-14dc-4f4f-8ce0-b5bc0af4add0.png)   
+> 이번에는 _**findAll()**_ 을 테스트 해보겠습니다.   
+> 위와 같이 테스트 코드를 작성했습니다.   
+> _**findAll()**_ 이므로 객체를 두개정도 생성 해주었습니다.   
+> 그리고 _**repository.findAll()**_ 을 하면 나오는 결과를 _**result**_ 에 저장했습니다.
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198238497-72c67590-b9d8-4e06-976e-ed40142db7cb.png)   
+> 테스트에 성공했습니다.   
+>    
+> 이제 전체 테스트를 돌려보겠습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198238631-c61f9e12-f0cf-4bb3-a6cd-e388f0bb9f0e.png)   
+> 클래스단에서 테스트를 돌렸습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198238731-48af2d83-1b87-4efc-88f4-06cfae03034c.png)    
+> 어? _**findByName()**_ 이 이상합니다.   
+> 아까는 괜찮았는데 지금은 왜 에러가 날까요?   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198238859-cfd53ebc-7c77-459a-b575-6f0adcf0d326.png)   
+> 테스트 순서를 보면,    
+> _**findAll()**_ 이 먼저 테스트 되었습니다.   
+> 그 다음에 _**findByName()**_ 이 테스트 되었습니다.   
+>    
+> 테스트 순서는 보장이 안됩니다.   
+> 모든 테스트는 순서와 상관없이 다 메서드 별로 따로 동작하도록 설계해야 합니다.   
+> 절대로 순서를 의존적으로 설계하면 안됩니다.   
+>    
+> 그런데, 지금 보면, _**findAll()**_ 이 먼저 실행되었습니다.    
+> ![image](https://user-images.githubusercontent.com/66030601/198242104-42c51b54-c9f5-4f07-adb1-2e37c7bef8ee.png)   
+> _**findAll()**_ 이 먼저 실행되어서 _**spring1**_, _**srping2**_ 가 이미 저장되어버렸습니다.      
+> 그래서 그 다음에 _**findByName()**_ 을 할 때, 이전에 저장한 _**spring1**_, _**spring2**_ 가 나와버린것입니다.   
+>    
+> 그래서 어떻게 해줘야 하냐면,   
+> 테스트를 하나 끝내고 나면, 데이터를 깔끔하게 클리어 해줘야 합니다.   
+>    
+> 테스트가 끝날때마다 데이터를 저장하는 저장공간(예제에서는 _**repository**_)을 깔끔하게 지워주는 코드를 추가해야 합니다.
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198251592-563447a3-31c5-4ba0-b7f3-d2e54882f99e.png)   
+> _**@AfterEach**_ 는 클래스의 각 메서드가 끝나고 어떠한 동작을 하는 것 입니다. 콜백 메서드라고 보면 됩니다.    
+>    
+> > _**@AfterEach**_   
+>> - 한번에 여러 테스트를 실행하면 메모리 DB에 직전 테스트의 결과가 남을 수 있습니다.   
+>> - 이렇게 되면, 이전 테스트 때문에 다음 테스트가 실패할 가능성이 있습니다.   
+>> - ***@AfterEach*** 를 사용하면 각 테스트가 종료될 때 마다 이 기능을 실행합니다.   
+>> - 이 예제에서는 메모리 DB에 저장된 데이터를 삭제합니다.
+>> - 테스트는 각각 독립적으로 실행되어야 합니다. 테스트 순서에 의존관계가 있는 것은 좋은 테스트가 아닙니다.   
+>    
+> 즉, _**save()**_ 끝나고 _**afterEach()**_ 가 호출되고,    
+> _**findByName()**_ 이 끝나고 _**afterEach()**_ 가 호출되고,    
+> _**findAll()**_ 이 끝나고 _**afterEach()**_ 가 호출됩니다.    
+>     
+> 우선은 ***MemoryMemberRepsitory()*** 만 테스트하면 되므로   
+> ![image](https://user-images.githubusercontent.com/66030601/198253593-c11c9cd0-fce5-4388-9630-1227eb3110b2.png)   
+> _**MemberRepository**_ 인터페이스를    
+> ![image](https://user-images.githubusercontent.com/66030601/198253686-e6d88e59-e92a-4bdf-ad8d-0c70639868a1.png)   
+> 이렇게 _**MemoryMemberRepository**_ 로 바꿔주었습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198253810-be106433-5e1c-47fc-ad8e-a63fd49c6865.png)    
+> 그리고 _**MemporyMemberRepository**_ 클래스에 _**clearStore()**_ 메서드를 추가로 작성해주었습니다.   
+> _**clear**_ 는 _**store**_ 를 싹 비워줍니다.   
+>    
+> 그리고 다시 _**MemoryMemberRepository**_ 로 돌아와서   
+> ![image](https://user-images.githubusercontent.com/66030601/198254050-35ea09cc-d888-49b4-90cb-aa22e0b6115a.png)    
+> _**afterEach()**_ 메서드 구현부에서 _**repository.clearStroe();**_ 를 호출하도록 코드를 작성해줍니다.   
+>     
+> 이렇게하면, _**Test**_ (테스트 메서드)가 실행되고 끝날 때마다 _**repository**_ 를 한번씩 비워줍니다.   
+> 그러면, 테스트작업은 순서와 상관이 없어집니다.   
+>    
+> 클래스단에서 테스트를 돌려보겠습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198259628-3ce06fa7-2952-45af-b188-1ac5cd7854f5.png)   
+> 사진처럼, 테스트가 전부 녹색체크로, 성공했다는 것을 확인할 수 있습니다.   
+>    
+> 다시한번 강조하지만,   
+> 테스트는 서로간에 순서 의존관계 없이 설계되어야 합니다.   
+> 따라서 하나의 테스트가 끝날때마다, 저장소나 공용 데이터들을 깔끔하게 지워줘야 합니다.   
+>    
+> 이번 예제에서는 먼저 _**MemoryMemberRepository**_ 등 개발을 먼저 한다음에,   
+> 테스트 케이스 작성을 했습니다.   
+>    
+> 반대로 이것을 완전히 뒤집어서,   
+>    
+> 테스트 케이스 클래스를 먼저 작성하고,   
+> Member, _**MemporyRepository**_ 를 작성할 수도 있습니다.   
+> 이렇게 테스트 케이스 클래스를 먼저 작성해서    
+> 검증할 수 있는 틀을 먼저 만든 상태에서 개발하는 것을 "_**TDD(테스트 주도 개발)**_"라고 합니다.   
+>    
+> ***    
+>     
+> 
 ## --------------------------------------------------------
 --- 
 위의 목차순으로
