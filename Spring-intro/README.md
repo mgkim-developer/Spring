@@ -703,7 +703,195 @@
 > 검증하는 방법은 여러가지가 있지만,   
 > 제일 좋은 방법은, 테스트 케이스를 활용하는 방법입니다.   
 > 
->
+> ***   
+>    
+> ## [✅회원 서비스 테스트](https://github.com/mgyokim/Spring/commit/8f6ae562c0f8805806635b0dcfdee9c432c0bf05)   
+> 회원 서비스 클래스를 테스트 해보겠습니다.   
+> 이전시간에 테스트를 할 때는,    
+> ![image](https://user-images.githubusercontent.com/66030601/198501041-5074aacb-4f17-4786-be58-6dae4e36e35a.png)   
+> 이렇게 패키지를 직접 만들었습니다. 이것을 편리하게 하는 방법이 있습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198501891-3debe462-9405-4e6e-badf-1d2aa856065b.png)   
+> 테스트 하고싶은 클래스에 커서를 두고, ***cmd + shift + t*** 를 누르면 _**Create New Test**_ 를 할 수 있습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198502054-6342844e-3309-441b-ba85-aab596841858.png)   
+> _**Testing library**_ 는 _**JUnit5**_ 를 선택했습니다.   
+> 클래스 이름은 _**MemberServiceTest**_ 라고 지정했습니다.   
+> 그리고 테스트할 메서드를 선택체크 해주었습니다. 그리고 OK를 누르면,   
+> ![image](https://user-images.githubusercontent.com/66030601/198502152-3993d5bf-4426-483d-91ce-e749af99de76.png)   
+> 이렇게 자동으로 테스트 껍데기를 만들어줍니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198502205-129decd2-8e5d-47c9-bf91-d5200c09a0c5.png)    
+> 생성된 위치는 _**test**_ 폴더의 _**service**_ 패키지에 만들어졌습니다.   
+> 이제 테스트를 하나씩 작성해보겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198503436-23a7b5ec-bf06-4e08-94dd-95a4a66c7aaa.png)    
+> 테스트 코드를 제외한 실제 동작하는 코드들은, 한글로 네이밍하는 것이 관례적으로 금기되었습니다.   
+> 테스트 코드는 영어권 사람들과 일하는게 아니라면, 한글로 네이밍하기도 합니다.   
+> 많은 사람들이 좀더 직관적으로 쉽게 알아들을 수 있기 때문입니다.   
+> 그리고 해당 프로젝트가 빌드될 때, 테스트 코드는 포함되지 않기 때문에 더욱이 그렇습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198503644-eeff4fe9-107f-47fb-b4f4-beeb7c83a08e.png)   
+> 회원 가입을 하려면 우선, 서비스가 있어야 합니다.   
+>    
+> 테스트는 사실, 생각해보면,   
+> 1. 뭔가가 주어졌는데, 
+> 2. 이것이 실행되었을 때, 
+> 3. 결과가 이게 나와야해!   
+>    
+> 대부분 이러한 과정으로 진행됩니다.   
+> 
+> ![image](https://user-images.githubusercontent.com/66030601/198503801-fc80e9da-7000-4d81-87bb-9987722d83e1.png)   
+> 그래서 given, when, then 으로 나눠서 작성하면 좋습니다.   
+>    
+> given을 보면, "아! 이 데이터를 기반으로 하는구나!"   
+> when을 보면, "아 이걸 실행하는걸 검증하는구나!"   
+> then을 보면, "여기가 이제 검증부구나!"   
+>    
+> 라는 것을 알 수 있습니다.   
+>    
+> 그래서 이렇게 주석을 작성해 두는 것만으로도 많은 도움이 됩니다.   
+> 물론 상황에 따라 다양하게 변형해야 하겠지만, 기본틀은 이러하다는 것을 알아두겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198503982-38cfb666-82bd-4d1d-a31f-327d60aea723.png)   
+> 회원 가입 테스트 코드를 작성했습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198504024-84aede0d-b750-4fe0-a6df-3f7488514c8d.png)   
+> 테스트를 통과했습니다.     
+>    
+> 그런데 여기서 중요한점이 있습니다.   
+> 위에 작성한 테스트 코드는 너무 단순한 동작입니다.   
+>    
+> 테스트는, 정상 범주의 케이스도 중요하지만, 예외 범주의 케이스가 더 중요합니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198504134-49fb0b81-316c-44b5-9b63-a3d8cfd23331.png)    
+> _**join**_ 을 살펴보면 알 수 있듯,    
+> 저장이 되는 것도 중요하지만, 더 중요한 것은,   
+> 중복 회원을 검증해서 중복회원이 존재하면, 중복검증 로직을 잘 타서 예외를 발생시키는 것이 중요합니다.   
+>    
+> 중복_회원_예외 라는 이름으로 테스트를 작성해보겠습니다.   
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198504233-2a4e4024-94ea-4d20-af6b-e417d2c47a56.png)    
+> 예외가 발생했을 때, 주어지는 메시지가 _**Service**_ 클래스의 _**validateDuplicateMember**_ 에서 예외를 던질 때 주는 메시지와 같은지 비교하도록 했습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198504347-6d8ffdb5-57c8-4775-85e1-1c20cddb0c4d.png)   
+> 테스트에 통과했습니다.   
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198504370-73494af8-4aba-4a02-af09-e63df42bb6e3.png)   
+> 이번에는 임의로 메시지를 변경해보겠습니다. 그러면 테스트에 실패해야합니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198504432-15ded648-5431-46d4-8262-c3c578571ae2.png)   
+> 테스트에 실패함을 확인할 수 있습니다.   
+>    
+> 위의 코드처럼 작성하는 방법이 있지만,   
+> 그런데, 이러한 예외 테스트 때문에 _**try-catch**_ 문을 넣는 것이조금 비효율적(?)으로 애매합니다.   
+>    
+> 그래서 좋은 문법이 제공됩니다.   
+>    
+> 우선 앞서 작성해둔 _**try-catch**_ 문은 주석처리했습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198504569-af62b350-0fac-4040-9daa-01a4c7372356.png)   
+> _**assertThrows**_ 라는 문법입니다.   
+> "중복회원 예외가 발생했을 때, ***IllegalStateException.class*** 가 발생해야 해!"라고 알려주고,   
+> 람다가 넘어가서   
+> 어떤로직을 태울때 _**IllegalStateException.class**_ 가 발생해야하는지 알려줍니다.   
+> _**memberService.join(member2);**_ 를 넣으면 _**IllegalStateException.class**_ 예외가 터져야 한다고 알려주는 것입니다.   
+>    
+> 테스트를 돌려보겠습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198504788-6f60e546-62f4-4b08-92bc-5558f4730600.png)   
+> 테스트에 통과했습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198504838-7ca7c8da-249b-4dca-9bcb-be7574c74636.png)   
+> 만약에 터저야 하는 예외가 ***IllegalStateException*** 이 아니라 _**NullPointerException**_ 이 터져야 한다고 임의로 지정하고 테스트를 돌려보겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198504919-5c4ce248-261b-4d30-85cf-547227e60dc3.png)    
+> 테스트에 실패하는 것을 확인할 수 있습니다. 다시 원래대로 _**IllegalStateException**_ 으로 작성해두겠습니다.   
+>    
+> _**assertThrows**_ 의 또 다른 좋은점은 메시지도 반환할 수 있다는 것 입니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198505065-387cba9f-5225-4b9b-8b31-48217a739f06.png)    
+> 이렇게 메시지를 비교하도록 작성하고, 테스트를 돌려보겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198505134-88b43fa8-57cb-4065-b2ae-0fab06cc7b48.png)   
+> 테스트에 성공하는 것을 확인할 수 있습니다.   
+>    
+> 자 이제, 테스트 코드를 작성할 때 꼭 해줘야 하는 것이 남아있습니다.   
+>    
+> 앞서 이야기했듯,   
+> 모든 테스트는 순서와 상관없이 메서드별로 따로 동작하도록 설계해야합니다.   
+> 절대로 순서를 의존적으로 설계하면 안됩니다.   
+>    
+> 즉, 메서드를 실행하고나면 데이터를 깔끔하게 클리어 해줘야 합니다.   
+>    
+> 그런데, 지금 MemberServiceTest클래스 코드에 문제가 있습니다.   
+> ![image](https://user-images.githubusercontent.com/66030601/198505330-a213f314-b482-4bff-aabc-30ce36aa7bea.png)   
+> 데이터를 클리어해주고 싶은데, _**MemberServiceTest**_ 클래스의 멤버가 _**MemberService**_ 밖에 없습니다.   
+> 클리어가 안될 것입니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198505690-6407a4d8-d72d-420c-be41-795757d2c74b.png)    
+> 그래서 어떻게 해야 하냐면,   
+> _**MemoryMemberRepository**_ 를 가져와야 합니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198505837-c2e53320-243d-496c-a30c-b89bfac91a90.png)   
+> 이렇게 해두면, 메서드가 돌때마다, _**db**_ 의 값을 _**clear**_ 해줍니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198505890-747ed5fe-c610-4f47-9610-dc423d7d204f.png)   
+> 테스트에 성공하는 것을 볼 수 있습니다.   
+> 테스트가 돌때마다 메모리가 클리어가 되서 잘 동작합니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198505941-22e6637b-878e-41d5-b872-0dda487d3cbf.png)   
+> 그런데, 이 코드를 보면, 조금 애매한 부분이 있습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198506004-4dea676f-5428-4f10-b515-3ef3e6e505b0.png)    
+> _**MemberService**_ 클래스에 있는 _**memberRepository**_ 는 _**new**_ 연산자를 이용했기 때문에,  _**MemberServiceTest**_ 클래스에 있는 _**memberRepository**_ 와 다른 객체입니다.   
+>    
+> 애매하다고 말한 이유가 바로 이것입니다.   
+> 이렇게 따로 2개의 객체를 사용할 이유가 없습니다. 같은 것을 사용하는 것이 아무래도 낫습니다.   
+>    
+> 이렇게 _**new**_ 로 다른 객체가 생성이 되면, 서로 다른 인스턴스 이기 떄문에 혹시라도 내용물이 달라질 수 있습니다.   
+>     
+> 그래서 어떻게 하는 것이 좋냐면, 같은 인스턴스를 사용하도록 코드를 수정하는게 좋습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198506329-58c44731-4d9e-426e-bbb3-82665826b946.png)   
+> _**MemberService**_ 클래스의 _**new MemoryMemberRepository()**_ 를 지우고,   
+> _**new**_ 로 직접 생성하는 것이 아니라 외부에서 넣어주도록 바꿔야 합니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198506428-3c861ea4-504c-4b31-b1f3-c6fe3082f605.png)    
+> _**cmd + n**_ 을 눌러서 _**Constructor**_ 를 눌러줍니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198506524-3cc6202c-4665-42d2-a56e-eb7bb0a2daad.png)   
+> 그러면, _**MemberService**_ 의 ***MemberRepository memberRepository*** 를 직접 _**new**_ 해서 생성하는게 아니라,   
+> 외부에서 넣어주도록 변경됩니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198506592-2b1f59c0-612f-4ea9-9544-a7a066549024.png)   
+> 그러면, _**MemberServiceTest**_ 클래스에서 _**MemberService()**_ 를 생성할 때, 내가 _**MemoryMemberRepository**_ 를 직접 넣어줄 수 있습니다.    
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198506800-767592fe-fed2-488d-84c7-0ba8ed97716f.png)   
+> _**@BeforeEach**_ 로 테스트가 동작하기 전에 넣어주면 됩니다.   
+>    
+> _**@BeforeEach**_ : 각 테스트 실행전에 호출됩니다. 테스트가 서로 영향이 없도록 항상 새로운 객체를 생성하고, 의존관계도 새로 맺어줍니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198506971-9adb7970-c90e-44a9-bc96-1b058f8774ed.png)   
+> 이것이 동작하는 방식은,   
+> 각 테스트를 실행하기 전에, _**@BeforeEach**_ 가 실행되는데,
+> _**MemoryMemberRepository()**_ 가 만들어집니다.   
+> 그리고, 만들어진 _**memberRepository**_ 를 _**MemberServiceTest**_ 클래스의 _**memberRepository**_ 에 넣어 놓습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198507384-38021055-6a57-4041-b88c-aac14b208e4a.png)   
+> _**new MemberService(memberRepository);**_ 를 할 때,   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198507506-80ca97b6-9c3c-4f3d-90c4-a6b9d452fd73.png)   
+> _**MemberService**_ 클래스에서 만들어둔 _**memberRepsotiroy**_ 를 넣어줍니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198507670-ed37abc3-cca0-499b-b75f-f9e3f11e6d97.png)   
+> 그러면, 같은 _**MemoryMemberRepsitory**_ 를 사용하게 됩니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198509606-6bf79de2-26a0-4210-9dae-da55516c5cf8.png)   
+> ![image](https://user-images.githubusercontent.com/66030601/198509653-639dfa92-e798-47e9-ada9-ee9f378286ca.png)   
+> _**MemberService**_ 입장에서 자신이 직접 _**new**_ 하지 않고, 외부에서 _**MemberRepository**_ 를 넣어줍니다.   
+>    
+> 이러한 것을 _**Dependecy Injection(DI - 의존성 주입)**_ 이라고 합니다.      
+>    
+> ***   
+>    
+> 
 ## --------------------------------------------------------
 --- 
 위의 목차순으로
