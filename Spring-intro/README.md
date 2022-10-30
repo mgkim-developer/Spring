@@ -25,8 +25,9 @@
 - 회원 도메인과 리포지토리 만들기 
 - 회원 리포지토리 테스트 케이스 작성 
 - 회원 서비스 개발 
-- 회원 서비스 테스트
-#### 스프링 빈과 의존관계
+- 회원 서비스 테스트   
+
+[스프링 빈과 의존관계](#스프링-빈과-의존관계)   
 - 컴포넌트 스캔과 자동 의존관계 설정 
 - 자바 코드로 직접 스프링 빈 등록하기
 #### 회원 관리 예제 - 웹 MVC 개발 
@@ -888,9 +889,273 @@
 > _**MemberService**_ 입장에서 자신이 직접 _**new**_ 하지 않고, 외부에서 _**MemberRepository**_ 를 넣어줍니다.   
 >    
 > 이러한 것을 _**Dependecy Injection(DI - 의존성 주입)**_ 이라고 합니다.      
+>
+
+# 스프링 빈과 의존관계
+> ## [✅ 컴포넌트 스캔과 자동 의존관계 설정](https://github.com/mgyokim/Spring/commit/a66bc98a0c17f70deeb99aeff4402fbc4c3f7d1e)    
+> 지금까지, _**MemberService**_ 와 _**MemberRepository**_ 를 만들었습니다.   
+> 그리고, _**Member**_ 객체도 만들고, 서비스를 통해서 멤버가 입할 수 있고, 리포지토리에 저장이 되고,   
+> 리포지토리에서 꺼내올 수 있는 이러한 로직들을 만들었고,   
+> 테스트도 만들었었습니다.   
 >    
-> ***   
+> 이번시간에는 화면을 붙이려고 합니다.   
+> 그럴려면 먼저 컨트롤러와 _**view**_ 템플릿이 필요합니다.   
+> 회원가입하고, 회원가입된 결과를 _**html**_ 로 뿌려주고, 이러한 것들을 하려고 합니다.   
 >    
+> 그럴려면, 멤버 컨트롤러를 만들어야 하는데, 멤버 컨트롤러가 멤버 서비스를 통해서 회원가입을 하고,   
+> 멤버서비스를 통해서 데이터를 조회할 수 있어야 합니다.   
+>    
+> 멤버컨트롤러가 멤버서비스를 의존하는 것입니다.   
+> 이러한 것을 "서로 의존 관계가 있다." 라고 표현합니다.   
+> 
+> 이 작업을 _**Spring**_ 스럽게 해보겠습니다.   
+>    
+> 먼저 멤버컨트롤러를 만들어보겠습니다.   
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/198845865-e74350c9-07c6-4ad6-a4cb-3db3a7f15d7b.png)    
+> 이렇게까지 작성해 놓으면,    
+> 기능은 아무것도 없지만 어떤 일이 벌어지냐면,   
+> 스프링이 처음에 뜰 때, _**SpringContainer**_ 가 생기는데,    
+> _**@Controller**_ 애너테이션만 있으면, _**MemberController**_ 객체를 생성해서 _**SpringContainer**_ 에 넣어둡니다.   
+> 그리고 스프링이 관리를 합니다.   
+>    
+> 이것을 "스프링 컨테이너에서 스프링 빈이 관리된다." 라고 합니다.     
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198845959-3e70112e-38c2-48fa-840a-190639bda36c.png)   
+> 그림으로 확인해보면 이러합니다.   
+> _**@Controller**_ 라는 애너테이션이 있으면, 스프링이 뜰 때,   
+> 스프링 컨테이너에서 해당 컨트롤러 객체를 생성해서 관리합니다.   
+>     
+> 다시 돌아와서,   
+> ![image](https://user-images.githubusercontent.com/66030601/198846976-e3ad6cd2-548a-4ab2-abb7-f186a859b9da.png)   
+> 그러면, _**MemberController**_ 가 _**memberservice**_ 를 가져다가 써야합니다.    
+> 이렇게 _**new**_ 로 생성해서 사용할 수도 있습니다.   
+>     
+> 하지만, 스프링이 관리를 하게 되면,   
+> 전부 스프링 컨테이너에 등록을 하게 되고, 스프링 컨테이너로부터 받아서 쓰도록 바꿔야 합니다.   
+>    
+> 그 이유를 알아보겠습니다.   
+>    
+> _**MemberController**_ 말고 다른 여러 컨트롤러들이 _**memberService**_ 를 가져다 쓸 수 있습니다.   
+> 예를 들면, 주문 컨트롤러에서도 _**memberService**_ 를 가져다 쓸 수도 있습니다. 회원은 여러군대에서 사용되기 때문입니다.   
+>    
+> _**MemberService**_ 를 살펴보면, 기능 자체가,   
+> 여러개의 인스턴스를 생성할 필요가 없고, 하나만 생성해서 같이 공용으로 사용하면 될 것으로 예상됩니다.   
+>     
+> 그런데 객체를 _**new**_ 로 생성해서 사용하게 되면, 여러개의 _**MemberService**_ 객체가 생성되어 비효율적입니다.   
+>    
+> 그래서 공용으로 사용하려면 어떻게 해야하냐면,   
+> 스프링 컨테이너에 등록을 하고 사용해야 합니다.   
+> 스프링 컨테이너에 등록을 하면, 딱 1개만 등록하게 됩니다.   
+> 이렇게 하면 방금 설명한 효과 외에도 굉장히 많은 부가적인 효과들이 있습니다. 이것들에 대해서는 뒤에서 좀더 알아보겠습니다.   
+>    
+> 이제 연결을 해보겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198861559-cfbda116-37bc-4747-b2b9-c45460c1e6d9.png)   
+> 생성자 연결을 하겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198861573-21e6166e-336e-4cbb-acdc-b88d93a5d468.png)   
+> 그러면, 그때, _**MemberController**_ 내부에 있는 생성자를 호출하는데,   
+> 생성자에 _**@Autowired**_ 애너테이션이 있으면,   
+> 이 코드의 _**memberService**_ 를 스프링이 스프링 컨테이너에 있는 _**memberService**_ 를 가져다가 연결시켜줍니다.   
+>    
+> - 생성자에 ***@Autowired***가 있으면 스프링이 연관된 객체를 스프링 컨테이너에서 찾아서 넣어줍니다. 이렇게 객체의 의존관계를 외부에서 넣어주는 것을 _**DI(Dependency Injection)**_, 의존성 주입이라 합니다.   
+> - 이전 테스트에서는 개발자가 직접 주입했고, 여기서는 _**@Autowired**_ 에 의해 스프링이 주입해줍니다.   
+>     
+> 그런데, 지금 코드를 보면, 빨간 밑줄이 그어져 있습니다.   
+> 뭔가 잘 안되는 것 같습니다.   
+>     
+> 일단 _**HelloSpringApplication**_ 를 _run_ 시켜보겠습니다.   
+>   
+> ![image](https://user-images.githubusercontent.com/66030601/198861686-6cb937a0-d947-47bb-ad4d-19a3f0f3d5e9.png)   
+> _**MemberService could not be found**_ 라는 것을 볼 수 있습니다.   
+>    
+> 무슨 이야기냐면,   
+>    
+> _**@Autowired**_ 라고 하면, 스프링 컨테이너에서 _**memberService**_ 를 가져와서 연결시켜준다고 했습니다.   
+> 그런데!!!   
+>    
+> 그림을 살펴보겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198861801-a6da7347-ba3d-4700-9900-484e5a1985f6.png)    
+>               
+> _**MemberController**_ 는 _**@Controller**_ 애너테이션 때문에, 스프링이 딱 뜰때, 스프링 컨테이너에 등록됩니다.    
+>    
+> 그러면, ***MemberController*** 는 안에 _**@Autowired**_ 애너테이션이 있으므로 스프링 컨테이너에서 관리하는 _**memberService**_ 를 가져다가 스프리잉 연결을 해주는데,   
+> 현재는 빨간 밑줄이 그어져 있는 것으로 보아 연결이 안된 것을 확인할 수 있습니다.   
+>    
+> 왜냐하면,   
+> _**MemberService**_ 를 살펴보면,    
+> ![image](https://user-images.githubusercontent.com/66030601/198861904-1b9a31df-813b-4fee-8995-707afe55686f.png)    
+> _**MemberService**_ 는 그냥 순수한 _**Java**_ 클래스입니다. 스프링이 이게 뭔지 알 수 있는 방법이 없습니다.   
+> _**MemberController**_ 는 _**@Controller**_ 애너테이션 때문에 스프링이 뜰 때, 애너테이션을 보고,   
+> "아! 이건 내가 관리해야할 대상이구나"라고 하고 스프링 컨테이너에 생성해서 등록해두는 규칙에 따라 등록하는데,   
+> _**MemberService**_ 는 순수한 _**Java**_ 코드입니다. 그래서 아무것도 되지 않습니다.   
+>    
+> 그러면 어떻게 해야할까요?   
+> ![image](https://user-images.githubusercontent.com/66030601/198861957-3cec49f8-c041-40b6-90c8-0d98ff4f6d88.png)    
+> _**MemberService**_ 에 _**@Service**_ 애너테이션을 붙여주면 됩니다.   
+> _**@Service**_ 애너테이션을 붙이면, 스프링이 "어? _**@Service**_ 네?" 라고 하고   
+> 스프링 컨테이너에 _**MemberService**_ 를 등록해줍니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198861983-fc8716b0-0116-4d55-9cd0-d0aed6454bd8.png)    
+> 그리고 _**MemberRepository**_ 로 가보겠습니다.   
+> _**MemberRepository**_ 구현체인 _**MemoryMemberRepository**_ 로 가서 _**@Repository**_ 애너테이션을 작성해주면 됩니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198862055-e77360d6-f8f5-40fb-9ca1-835e49541216.png)    
+> _**@Controller**_ - Controller,    
+> _**@Service**_ - Service,    
+> _**@Repository**_ - Repository   
+>    
+> Controller 통해서 외부 요청을 받고,   
+> Service를 통해서 비즈니스 로직을 만들고,    
+> Repository에서 데이터를 저장하는,    
+>     
+> 이것은 굉장히 정형화된 패턴입니다.   
+>    
+> 이렇게 해놓으면,   
+> 스프링이 뜰 때, _**@Controller**_, _**@Repository**_, _**@Service**_ 를 쫙 가지고 올라와서 스프링 컨테이너에 등록해줍니다.   
+>     
+> 그리고 나서, 뭘 해주냐면,   
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198862126-4f789632-435a-42a4-8af2-81e5b479c473.png)    
+> _**Controller**_ 와 _**Service**_ 를 연결시켜 줘야 합니다.    
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198862154-a2c49ace-d457-438f-92c6-1ec3bdc80840.png)    
+> 연결시켜줄 때, _**@Autowired**_ 를 쓰면 된다고 했었습니다.   
+> 생성자에 _**@Autowired**_ 를 쓰면,   
+> _**MemberController**_ 가 생성이 될 때, 스프링빈에 등록되어 있는 _**MemberService**_ 객체를 가져다가 넣어줍니다.   
+>     
+> 이게 바로 _**DI**_(_**Dependency Injection**_ 의존성 주입) 입니다. 스프링이 딱 넣어주는 것입니다.
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198862219-4dc2700b-ba11-4ad0-929f-6bc1cea014da.png)    
+> 이번에는 _**MemberService**_ 를 보겠습니다.    
+> 생성자에 _**@Autowired**_ 를 작성해주었습니다.    
+>     
+> 그러면, _**MemberService**_ 는 _**MemberRepository**_ 가 필요한데,   
+> _**@Autowired**_ 가 있으면,   
+>     
+> _**MemberService**_ 를 스프링이 _**@Service**_ 를 보고 생성을 할 때,   
+> 스프링 컨테이너에 등록을 하면서, 생성자를 호출하면서 _**@Autowired**_ 가 있으면,   
+> "아! _**MemberService**_ 는 _**MemberRepository**_ 가 필요하구나?"라고 하면서    
+> 스프링 컨테이너에 있는 _**MemberRepository**_ 를 _**MemberService**_ 에 넣어줍니다.   
+>     
+> 지금 같은 경우에는 구현체로 _**MemoryMemberRepository**_ 가 있으므로 이 _**MemoryMemberRepository**_ 를 _**MemberService**_ 에 주입을 해줍니다.    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198862319-269b3186-4bcb-4b29-b281-f01e4a293caf.png)    
+> 그러면 이렇게 _**memberController**_, _**memberService**_, _**memberRepository**_ 가 연결이 완료됩니다.    
+>     
+> 이 상태에서 _**HelloSpringApplication**_ 을 실행해보겠습니다.   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198862374-cc6a53cb-e0ef-4132-9006-c8caf4918dfb.png)    
+> _**Tomcat started on port:8080**_ 도 잘 뜬것을 볼 수 있습니다.   
+>     
+> 즉, 스프링이 스프링 컨테이너를 만들때 문제없이 잘 되었다는 뜻이기도 합니다.   
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198862407-2aaae77f-193a-4f30-871b-b390c8aa23f3.png)    
+> 지금은 MemberController 관련된 기능이 아무것도 없기 때문에,    
+> 연결하는 과정만 알아보았습니다.    
+>     
+> 정리해보겠습니다.    
+>      
+> 스프링 빈을 등록하는 방법은 2가지가 있습니다.   
+> - 컴포넌트 스캔과 자동 의존관계 설정   
+> - 자바 코드로 직접 스프링 빈 등록하기
+>      
+> 컴포넌트 스캔 원리는 다음과 같습니다.    
+> - _**@Conponent**_ 애노테이션이 있으면 스프링 빈으로 자동 등록됩니다.    
+> - _**@Controller**_ 컨트롤러가 스프링 빈으로 자동 등록된 이유도 컴포넌트 스캔 때문입니다.    
+>     
+> _**@Controller**_ 를 포함하는 다음 애노테이션도 스프링 빈으로 자동 등록됩니다.    
+> - _**@Controller**_
+> - _**@Service**_    
+> - _**@Repository**_     
+>      
+> 우리가 위해서     
+> _**@Controller**_       
+> _**@Service**_    
+> _**@Repository**_    
+> 애너테이션을 통해 한 것이 컴포넌트 스캔 방식입니다.    
+>     
+> 이것이 왜 컴포넌트 방식이나면,    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/198862521-ae910217-c765-42b2-95cc-5841b599a61a.png)    
+> _**MemberService**_ 로 살펴보면, _**@Service**_ 대신 사실은 _**@Component**_ 라고 하면 됩니다.    
+>      
+> "어? 나는 _**@Service**_ 라고 했는데 왜 되는 거지?"    
+>     
+> 라고 생각할 수 있습니다. _**@Service**_ 애너테이션 내부를 살펴보겠습니다.    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/198862555-dc03f469-89cb-4e06-8672-6db24e270df0.png)     
+> _**@Service**_ 안을 보면,      
+> _**@Component**_ 라는 애너테이션이 등록이 되어 있습니다.    
+>      
+> 그리고 _**@Controller**_ 도 마찬가지입니다.       
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/198862575-017e1e44-0c02-4b42-ba97-2a55da0a3c86.png)     
+> _**@Controller**_ 내부를 보면, _**@Component**_ 애너테이션이 붙어있습니다.    
+> 그리고 _**@Repository**_ 도 마찬가지일 것입니다.    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/198862591-3bf75a15-6b65-429a-a268-5943da1f3c16.png)      
+> _**@Repository**_ 내부도 살펴보면, _**@Component**_ 라고 붙어있습니다.     
+> 그래서, 원래 이름은 컴포넌트 스캔이라고 합니다.    
+>      
+> 스프링이 올라올 때,     
+> _**@Component**_ 와 관련된 애너테이션이 있으면,    
+> 그것들은 전부 객체를 하나씩 생성해서 스프링 컨테이너에 등록을 합니다.    
+>      
+> 그리고 _**@Autowired**_ 는 등록이 되어 있는 것들을 연결해줍니다.     
+> _**@Autowired**_ 덕분에      
+> _**MemberController**_ 가 _**memberService**_ 를 쓸 수 있게되고,    
+> _**memberService**_ 가 _**memberRepository**_ 를 쓸 수 있게 되는 것입니다.    
+>      
+> 이러한 방법이,    
+> 컴포넌트 스캔과 자동 의존관계 설정 이라는 것입니다.    
+>      
+> 그리고, 두번째 방법은,    
+> - 자바 코드로 직접 스프링 빈 등록하기    
+>      
+> 입니다.    
+>      
+> 두가지 방법을 모두 알아야 합니다.    
+>       
+> 스프링을 쓰면, 왠만한 것들을 스프링 빈으로 등록해서 써야합니다.    
+> 그렇게 해야 하는 이점이 많습니다.      
+> 이점들은 공부하면서 하나씩 알아겠습니다.(ex. AOP)    
+>      
+> 이즘에서 드는 궁굼증이 있습니다.    
+> "그러면 아무대나 _**@Component**_ 가 있어도 되나요?"    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/198862693-034908bc-e3aa-49f8-8471-b906fd69c84e.png)      
+> 예를 들어 이렇게 아무 패키지를 만들어서 클래스를 생성하고, _**@Service**_ 를 붙이면 될까요?    
+>      
+> 기본적으로는 "안된다."입니다.    
+>     
+> 왜냐하면, 이게 어디서부터 되냐면,     
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/198862833-00f7318a-2271-4fc2-a5c9-757fc2f09615.png)     
+> 지금 우리가 _**HelloSpringApplication**_ 을 실행시키는데,   
+>      
+> _**hello.hellospring**_ 패키지 하위들은 스프링이 자동으로 전부 탐색해서 스프링 빈으로 등록합니다.    
+>      
+> 그런데, _**hello.hellospring**_ 패키지와 동일하거나 하위패키지가 아닌 패키지들은 스프링빈으로 컴포넌트 스캔을 하지 않습니다.     
+>      
+> 그래서 _**demo**_ 는 등록되지 않습니다.(설정을 해주면 가능하지만, 기본적으로는 컴포넌트 스캔 대상X)    
+>       
+> _**hello.hellospring**_ 패키지를 포함한 하위패키지만 컴포넌트 스캔 대상입니다.    
+> _**demo**_ 패키지는 다시 삭제했습니다.    
+>      
+> 참고로,  
+> 스프링은 스프링 컨테이너에 스프링 빈을 등록할 때,     
+> 기본으로 싱글톤으로 등록합니다.     
+> (싱글톤이란, 유일하게 하나만 등록해서 공유한다는 뜻입니다. (ex. 회원컨트롤러 1개만, 멤버서비스 1개만, 멤버리포지토리도 1개만)    
+>     
+> 따라서 같은 스프링 빈이면 모두 같은 인스턴스입니다.    
+>       
+> 설정으로 싱글톤이 아니게 설정할 수 있지만,   
+> 특별한 경우를 제외하면 대부분 _**싱글톤**_ 으로 사용합니다.      
+> 
+> 
 > 
 ## --------------------------------------------------------
 --- 
