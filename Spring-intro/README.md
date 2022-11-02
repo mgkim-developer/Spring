@@ -1071,7 +1071,7 @@
 > - _**@Service**_    
 > - _**@Repository**_     
 >      
-> 우리가 위해서     
+> 우리가 위에서     
 > _**@Controller**_       
 > _**@Service**_    
 > _**@Repository**_    
