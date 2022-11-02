@@ -1154,9 +1154,152 @@
 >       
 > 설정으로 싱글톤이 아니게 설정할 수 있지만,   
 > 특별한 경우를 제외하면 대부분 _**싱글톤**_ 으로 사용합니다.      
+>      
+> ***   
+>    
+> ## [✅ 자바 코드로 직접 스프링 빈 등록하기](https://github.com/mgyokim/Spring/commit/236266019238775d7b1ee0fd7c8cbab3e79375bc)    
+> 지난시간에는, _**@Service**_, _**@Repository**_, _**@Autowired**_, 등을 이용하여   
+> 컴포넌트 스캔으로 스프링 컨테이너에 스프링빈으로 자동으로 등록하고, 연결하는 것을 자동으로 했습니다.    
+>     
+> 이번시간에는, 자바 코드로 하나하나 직접 스프링 빈을 등록 해보도록 하겠습니다.    
+>     
+> ***MemberService*** 와 ***MemberRepository*** 의 _**@Service**_, _**@Repository**_, _**@Autowired**_ 애너테이션을 제거하고 진행하도록 하겠습니다. (_**MemberController**_ 는 그대로 둡니다.)    
+>     
+> 지우고나서 돌려보면,     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199425575-538ae1ba-9c6e-4fb9-910a-05c146fc75ba.png)     
+> 당연히 스프링이 올라올 때 컴포넌트 스캔이 안되므로, _**MemberService**_ 가 스프링빈에 등록되어 있지 않습니다.     
+> 그래서 이처럼 오류가 납니다.     
+>      
+> 컴포넌트 스캔방식 말고, 직접 등록하는 방식에 대해 알아보겠습니다.     
+>       
 > 
-> 
-> 
+> ![image](https://user-images.githubusercontent.com/66030601/199425798-69457b3a-06b1-4004-8c7a-bbe15f12be5b.png)     
+> _**SpringConfig**_ 라는 이름으로 해당 위치에 파일을 생성했습니다.    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199425903-c6df5a17-f8f3-4748-9ddd-8266302769ef.png)     
+> 그리고 _**@Configuration**_ 을 작성해줍니다.    
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199425974-46bc01d2-f55c-479d-808f-23f4591ddda1.png)    
+> 이렇게 작성을 해주는데,    
+> _**@Bean**_ 애너테이션은,   
+> 스프링이 뜰 때, _**@Configuration**_ 을 읽고, "***@Bean*** 은 스프링에 등록하라는 뜻이네!" 라고 스프링이 인식을 해서    
+> _**memberService()**_ 를 호출해서 스프링빈에 등록을 해줍니다.    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199426213-a8aaa668-9c04-4fdb-afe0-97f9dd6045d6.png)     
+> 그런데, _**MemberService();**_ 에 빨간줄이 있는 것으로 보아, 생성자에서 뭔가를 넣어줘야 합니다.    
+> _**cmd + p**_ 를 눌러서 확인해보면, _**MemberRepository**_ 를 넣어줘야 하는 것을 확인할 수 있습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199426579-9efa63e1-5ac9-4b88-b371-81a86d5a97ca.png)    
+> _**MemberRepository**_ 를 _**@Bean**_ 으로 등록해주었습니다.    
+> _**MemberRepository**_ 는 인터페이스라서, 구현체인 _**MemoryMemberRepository**_ 를 _**new**_ 해주었습니다.     
+>      
+> 그러면, _**MemberService**_ 에는 방금 작성한 _**@Bean**_ 에 있는 _**memberRepository**_ 를 넣어줘야 합니다.    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199428185-2e16f394-e4c5-4c4d-a082-a20104b19df3.png)    
+> 이렇게 넣어주면 됩니다.    
+>      
+> 그러면 이게 스프링이 뜰때 어떻게 뜨냐면,    
+> _**MemberService**_ 와 _**MemberRepository**_ 를 둘다 스프링빈에 등록을 하고,     
+> 그러면서, 스프링빈에 등록되어 있는 _**memberRepository**_ 를 _**MemberService**_ 에 넣어줍니다.    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199428474-d1490447-6b6f-4d0a-8315-e6d8acebb6f6.png)    
+> 그러면 이러한 그림이 완성됩니다.    
+>      
+> - _**@Configuration**_    
+> - _**@Bean**_     
+>     
+> 이것들을 이용해서 직접 스프링 빈에 등록할 수 있습니다.    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199429020-44bf5ad9-187d-4e83-9903-4d5773098492.png)    
+> 그런데, _**@Controller**_ 는 어쩔 수 없습니다.    
+>      
+> 컨트롤러는 어쨋든 스프링이 관리하는 대상이기 때문에, 이렇게 두면 컴포넌트 스캔이 올라가고,    
+> 컴포넌트 스캔이기 때문에 _**@Autowired**_ 로 연결해줍니다.     
+>      
+> 이렇게 해두면, _**@Bean**_ 으로 등록한 _**memberService**_ 가 연결됩니다.    
+>      
+> 이 상태로 잘 동작하는지 돌려보겠습니다.    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199430270-ceee765f-cc2c-4c6e-9935-a14a9e91483f.png)    
+> 정상적으로 잘 동작하는 것을 확인할 수 있습니다.    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199430418-7e491d0c-4758-4ceb-85ec-e1f23d7f825a.png)    
+> DI 에는 
+> - 필드주입     
+> - setter 주입    
+> - 생성자 주입         
+>       
+> 이렇게 3가지 방법이 있습니다.   
+>      
+> 의존관계 실행중에 동적으로 변하는 경우는 거의 없으므로 _**생성자 주입**_ 을 권장합니다.    
+>     
+> 우리가 작성했던 위의 코드처럼, 생성자를 통해서 _**MemberService**_ 가 들어오는데, 이러한 것을 생성자 주입 이라고 합니다.   
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199430879-beef77e0-bbd3-45c1-b4ab-0281c1c4095d.png)    
+> 그리고 이렇게 생성자를 빼고, 아예 필드에다가 _**@Autowired**_ 하는 방법이 있습니다.   
+> 이러한 방식을 _**필드 주입**_ 이라고 합니다.    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199431111-47028aed-d4e1-4b9f-adf7-665f43ea9f23.png)    
+> 그런데, 인텔리제이가 _**@Autowired**_ 밑에 물결표시를 했습니다. 뭔가 애매한 것 같습니다.    
+> 살펴보면, _**Create constructor**_ 라고 나옵니다.     
+>     
+> 필드주입은 별로 좋지 않은 방법입니다.    
+>     
+> 왜냐하면, 스프링이 뜰 때만 얘를 넣어주고, 이후에는 중간에 바꿔치기 할 수 있는 방법이 아예 없기 때문입니다.    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199432177-19475a28-3c7e-4c95-8330-69877c2a0e97.png)     
+> 이번에는 _**setter 주입**_ 입니다.    
+> _**cmd + n**_ 으로 _**setter**_ 를 넣고, 여기에 _**@Autowired**_ 를 붙여주었습니다.    
+> 이렇게 해주면, 생성은 생성대로 되고, _**setter**_ 가 나중에 호출이 되서 _**setter**_ 를 통해서 주입이 됩니다.    
+>     
+> 그런데, 이것의 단점은,    
+> 누군가가 _**MemberController**_ 를 호출했을 때, 이것이 _**public**_ 으로 열려있어야 합니다.   
+> _**setMemberService**_ 를 한번 세팅하고나면 중간에 바꿀일이 없지만, _**public**_ 하게 노출된다는 단점이 있습니다.    
+> 중간에 잘못 바꾸면 문제가 생길것 입니다.    
+>     
+> 그래서 ***DI 방식*** 으로는 필드주입, setter 주입 보다는 ***생성자 주입*** 이 권장됩니다.    
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199432715-30ca70a1-6fa8-47b8-9689-61289d96e01c.png)    
+> 실무에서는 주로 정형화된 컨트롤러, 서비스, 리포지토리 같은 코드는 컴포넌트 스캔을 사용합니다.   
+> 그리고 정형화 되지 않거나, 상황에 따라 구현 클래스를 변경해야 하면, 설정을 통해 스프링 빈으로 등록합니다.    
+>     
+> 이 내용이 중요한 내용입니다.    
+>     
+> 이후에는 무엇을 할 것이냐면,   
+> 현재는 _**MemberRepository**_ 를 만들어놓았는데,   
+>    
+> ![image](https://user-images.githubusercontent.com/66030601/199432986-14be546f-0089-40fd-8052-00cf86bc5e2a.png)     
+> 비즈니스 요구사항 정리부분에서 언급했듯, 아직 데이터 저장소가 선정되지 않았다는 가상의 시나리오 조건이 있었습니다.    
+> 그래서 일단 _**MemoryMemberRepository**_ 로 구현했고, 나중에 교체할 것입니다.    
+>     
+> 그래서 지금 인터페이스로 설계하고, 구현체로 _**MemoryMemberRepository**_ 를 사용하는 것입니다.    
+> 나중에 이 _**MemoryMemberRepository**_ 를 다른 리포지토리로 바꿔치기 할 것입니다.    
+>     
+> 이때, 기존에 운영중인 코드를 하나도 손대지 않고 바꿔치기 할 수 있는 방법이 있습니다. 
+> 그 방법을 사용하려면 나중에 구현체를 바꿔치기 해야합니다.   
+>    
+> 그러면, "상황에 따라 구현 클래스를 변경해야 하면 설정을 통해 스프링 빈으로 등록한다" 라는 상황인 것입니다.    
+>     
+> 그래서 나중에 실제 데이터베이스를 연결하게되면 뭐만 고치면 되냐면,     
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199452890-35185737-0ff4-4a3f-a130-ffc1a3e044e6.png)    
+> 이것만 이런식으로 고치면 됩니다. 다른코드는 전혀 손댈 필요 없습니다.    
+>     
+> 이것이 바로, 직접 코드로 스프링 빈을 등록할 때의 장점입니다.   
+> 그러나, 컴포넌트 스캔을 사용하면 여러 코드를 바꿔야 합니다.   
+>         
+> 여기서는 향후 메모리 리포지토리를 다른 리포지토리로 변경할 예정이므로, 컴포넌트 스캔 방식 대신에 자바 코드로 스프링 빈을 설정하겠습니다.    
+>     
+> 참고 : XML로 설정하는 방식도 있지만 최근에는 잘 사용하지 않으므로 생략합니다.    
+>     
+> 참고 : DI 에는 필드 주입, setter 주입, 생성자 주입 이렇게 3가지 방법이 있습니다. 의존관계가 실행중에 동적으로 변하는 경우는 거의 없으므로 생성자 주입을 권장합니다.  
+>     
+> 참고 : 실무에서는 주로 정형화된 컨트롤러, 서비스, 리포지토리 같은 코드는 컴포넌트 스캔을 사용합니다. 그리고 정형화 되지 않거나, 상황에 따라 구현 클래스를 변경해야 하면, 설정을 통해 스프링 빈으로 등록합니다.   
+>    
+> 주의 : @Autowired 를 통한 DI는 helloController, memberService 등과 같이 스프링이 관리하는 객체에서만 동작합니다. 스프링 빈으로 등록하지 않고 내가 직접 생성한 객체에서는 동작하지 않습니다.      
+
+
 ## --------------------------------------------------------
 --- 
 위의 목차순으로
