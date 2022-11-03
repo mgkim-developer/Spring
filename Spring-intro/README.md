@@ -1306,32 +1306,32 @@
 > 아주 단순하게, 회원을 등록하고 조회할 수 있는 버튼(링크)이 있는 사이트를 만들어보겠습니다.     
 >      
 > ![image](https://user-images.githubusercontent.com/66030601/199653469-0f90ac92-4db5-4ce5-9c6b-fa9987da8ae4.png)     
-> 컨트롤러 패키지에 HomeController 라는 이름으로 파일을 만들었습니다.     
+> 컨트롤러 패키지에 _**HomeController**_ 라는 이름으로 파일을 만들었습니다.     
 >      
 > ![image](https://user-images.githubusercontent.com/66030601/199653558-fa4bb91d-02bd-4102-ac64-7919ef51d093.png)      
 > 이렇게 작성을 했습니다.     
 >      
-> "/" 는 뭐냐면, localhost:8080으로 딱 들어오면,     
-> home()이 호출이 됩니다. 그러면 home.html이 호출되어야 할 것입니다.    
+> "/" 는 뭐냐면, _**localhost:8080**_ 으로 딱 들어오면,     
+> _**home()**_ 이 호출이 됩니다. 그러면 _**home.html**_ 이 호출되어야 할 것입니다.    
 >     
-> template에서 home.html을 생성하겠습니다.      
+> _**template**_ 에서 _**home.html**_ 을 생성하겠습니다.      
 >      
 > ![image](https://user-images.githubusercontent.com/66030601/199653734-82489f3e-2919-4029-99f9-17c486db8467.png)       
-> 이제 서버를 run 시켜보겠습니다.       
+> 이제 서버를 _**run**_ 시켜보겠습니다.       
 >      
 > ![image](https://user-images.githubusercontent.com/66030601/199653802-799c7abf-4b8b-486a-855d-685342a9b503.png)      
-> localhost:8080의 화면입니다.     
+> _**localhost:8080**_ 의 화면입니다.     
 >      
 > ![image](https://user-images.githubusercontent.com/66030601/199653847-48468012-eda0-49c6-a7f1-1a09e5c87237.png)      
-> 그리고 회원 가입 링크를 누르면, localhost:8080/members/new로 가게 했고,      
+> 그리고 회원 가입 링크를 누르면, _**localhost:8080/members/new**_ 로 가게 했고,      
 >        
 > ![image](https://user-images.githubusercontent.com/66030601/199654043-c3e7fec5-e4d6-4d56-b661-860b918a6f69.png)      
-> 회원 목록을 누르면 localhost:8080/members로 가게 했습니다.    
+> 회원 목록을 누르면 _**localhost:8080/members**_ 로 가게 했습니다.    
 >      
-> 물론 지금은 페이지 Controller가 없으므로 에러페이지가 나옵니다.       
+> 물론 지금은 페이지 _**Controller**_ 가 없으므로 에러페이지가 나옵니다.       
 >        
 > 그런데, 조금 이상한 점이 있습니다.      
-> "이전에 index.html을 만들었는데 아무것도 없을 때는 WelcomPage로 간다고 했는데??"       
+> "이전에 _**index.html**_ 을 만들었는데 아무것도 없을 때는 _**WelcomePage**_ 로 간다고 했는데??"       
 >          
 > ![image](https://user-images.githubusercontent.com/66030601/199654521-1fd3baa6-363e-4ba3-8e02-3168eb89d9e5.png)           
 > 저번에 이 그림과 함께 정적 컨텐츠를 공부한 것을 기억해 봅시다.       
@@ -1340,17 +1340,17 @@
 >        
 > 스프링에 요청이 오면, 
 > 1. 스프링은 컨트롤러 쪽을 먼저 봐서 관련 컨트롤러가 있는지 먼저 찾고,
-> 2. 없으면 static 파일을 탐색하도록 되어있습니다.        
+> 2. 없으면 _**static**_ 파일을 탐색하도록 되어있습니다.        
 >          
 > ![image](https://user-images.githubusercontent.com/66030601/199654904-d3a6fcef-ebf6-4614-9740-a1ede7b5eb48.png)       
-> 즉, 첫번째 도메인인 "/" localhost:8080 요청이 오면,     
+> 즉, 첫번째 도메인인 "/" _**localhost:8080**_ 요청이 오면,     
 > 첫번쨰 도메인이 매핑된 컨트롤러가 있는지 찾아본 후,       
-> 매핑된게 있으므로, 해당 Controller가 호출되고 끝납니다.       
+> 매핑된게 있으므로, 해당 _**Controller**_ 가 호출되고 끝납니다.       
 >        
-> 그러면, 기존에 static 파일에 만들어 두었던 index.html을 무시됩니다.      
+> 그러면, 기존에 _**static**_ 파일에 만들어 두었던 _**index.html**_ 을 무시됩니다.      
 >        
 > ![image](https://user-images.githubusercontent.com/66030601/199655035-a37aa291-3615-4153-ba68-ffda4c4fd107.png)           
-> home.html을 생성해서 작성해주었습니다.      
+> _**home.html**_ 을 생성해서 작성해주었습니다.      
 > 
 > ***         
 >      
