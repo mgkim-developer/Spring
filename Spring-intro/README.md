@@ -1408,8 +1408,8 @@
 > _**@PostMapping**_ 을 해줘야 합니다. "_**/members/new**_" 를 해줍니다.        
 > 그리고         
 >         
-> _**Member mmeber = new Member();**_          
-> _**member.setName(form.getName());_**            
+> _**Member mmeber = new Member(); **_          
+> _**member.setName(form.getName());**_            
 >             
 > 를 해주면 멤버가 만들어집니다.       
 >       
