@@ -29,19 +29,20 @@
 
 [스프링 빈과 의존관계](#스프링-빈과-의존관계)   
 - 컴포넌트 스캔과 자동 의존관계 설정 
-- 자바 코드로 직접 스프링 빈 등록하기
-#### 회원 관리 예제 - 웹 MVC 개발 
+- 자바 코드로 직접 스프링 빈 등록하기    
+        
+[회원 관리 예제 - 웹 MVC 개발](#회원-관리-예제-웹-MVC-개발)
 - 회원 웹 기능 - 홈 화면 추가 
 - 회원 웹 기능 - 등록
 - 회원 웹 기능 - 조회
-#### 스프링 DB 접근 기술
+[스프링 DB 접근 기술](#스프링-DB-접근-기술)
 - H2 데이터베이스 설치 
 - 순수 Jdbc 
 - 스프링 통합 테스트 
 - 스프링 JdbcTemplate 
 - JPA
 - 스프링 데이터 JPA
-#### AOP
+[AOP](#AOP)
 - AOP가 필요한 상황
 - AOP 적용  
 
@@ -1297,7 +1298,108 @@
 >     
 > 참고 : 실무에서는 주로 정형화된 컨트롤러, 서비스, 리포지토리 같은 코드는 컴포넌트 스캔을 사용합니다. 그리고 정형화 되지 않거나, 상황에 따라 구현 클래스를 변경해야 하면, 설정을 통해 스프링 빈으로 등록합니다.   
 >    
-> 주의 : @Autowired 를 통한 DI는 helloController, memberService 등과 같이 스프링이 관리하는 객체에서만 동작합니다. 스프링 빈으로 등록하지 않고 내가 직접 생성한 객체에서는 동작하지 않습니다.      
+> 주의 : @Autowired 를 통한 DI는 helloController, memberService 등과 같이 스프링이 관리하는 객체에서만 동작합니다. 스프링 빈으로 등록하지 않고 내가 직접 생성한 객체에서는 동작하지 않습니다.       
+       
+# 회원 관리 예제 웹 MVC 개발       
+> ## [✅ 회원 웹 기능 - 홈 화면 추가](https://github.com/mgyokim/Spring/commit/d679f78688b5f3ffe2619b4d81b9aaaa37b25fc8)      
+> 홈 화면을 추가해 보겠습니다.    
+> 아주 단순하게, 회원을 등록하고 조회할 수 있는 버튼(링크)이 있는 사이트를 만들어보겠습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199653469-0f90ac92-4db5-4ce5-9c6b-fa9987da8ae4.png)     
+> 컨트롤러 패키지에 HomeController 라는 이름으로 파일을 만들었습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199653558-fa4bb91d-02bd-4102-ac64-7919ef51d093.png)      
+> 이렇게 작성을 했습니다.     
+>      
+> "/" 는 뭐냐면, localhost:8080으로 딱 들어오면,     
+> home()이 호출이 됩니다. 그러면 home.html이 호출되어야 할 것입니다.    
+>     
+> template에서 home.html을 생성하겠습니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199653734-82489f3e-2919-4029-99f9-17c486db8467.png)       
+> 이제 서버를 run 시켜보겠습니다.       
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199653802-799c7abf-4b8b-486a-855d-685342a9b503.png)      
+> localhost:8080의 화면입니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199653847-48468012-eda0-49c6-a7f1-1a09e5c87237.png)      
+> 그리고 회원 가입 링크를 누르면, localhost:8080/members/new로 가게 했고,      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199654043-c3e7fec5-e4d6-4d56-b661-860b918a6f69.png)      
+> 회원 목록을 누르면 localhost:8080/members로 가게 했습니다.    
+>      
+> 물론 지금은 페이지 Controller가 없으므로 에러페이지가 나옵니다.       
+>        
+> 그런데, 조금 이상한 점이 있습니다.      
+> "이전에 index.html을 만들었는데 아무것도 없을 때는 WelcomPage로 간다고 했는데??"       
+>          
+> ![image](https://user-images.githubusercontent.com/66030601/199654521-1fd3baa6-363e-4ba3-8e02-3168eb89d9e5.png)           
+> 저번에 이 그림과 함께 정적 컨텐츠를 공부한 것을 기억해 봅시다.       
+>       
+> 우선순위가 있습니다.       
+>        
+> 스프링에 요청이 오면, 
+> 1. 스프링은 컨트롤러 쪽을 먼저 봐서 관련 컨트롤러가 있는지 먼저 찾고,
+> 2. 없으면 static 파일을 탐색하도록 되어있습니다.        
+>          
+> ![image](https://user-images.githubusercontent.com/66030601/199654904-d3a6fcef-ebf6-4614-9740-a1ede7b5eb48.png)       
+> 즉, 첫번째 도메인인 "/" localhost:8080 요청이 오면,     
+> 첫번쨰 도메인이 매핑된 컨트롤러가 있는지 찾아본 후,       
+> 매핑된게 있으므로, 해당 Controller가 호출되고 끝납니다.       
+>        
+> 그러면, 기존에 static 파일에 만들어 두었던 index.html을 무시됩니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199655035-a37aa291-3615-4153-ba68-ffda4c4fd107.png)           
+> home.html을 생성해서 작성해주었습니다.      
+> 
+> ***         
+>      
+> ## [✅ 회원 웹 기능 - 등록](https://github.com/mgyokim/Spring/commit/630626cac59e74f73a1a6e7731990e8cd5071ec2)       
+>        
+> ***      
+>        
+> ## [✅ 회원 웹 기능 - 조회](https://github.com/mgyokim/Spring/commit/89b9a87412d551ae520c1cb0646bd0b003d9ab2a)          
+
+# 스프링 DB 접근 기술
+> ## [✅ H2 데이터베이스 설치](https://github.com/mgyokim/Spring/commit/b3195663b9e2e5e7e6012a55bdfc5404f189b55b)
+>
+>
+> ***         
+>       
+> ## [✅ 순수 Jdbc](https://github.com/mgyokim/Spring/commit/c9624a88093fc355ec9ca53e1d4bd7ee78d4a946)
+>
+>
+> ***         
+>         
+> ## [✅ 스프링 통합 테스트](https://github.com/mgyokim/Spring/commit/5878a71caae55232fccac0e1aa415350d3170d9e)
+>
+>
+> ***         
+>       
+> ## [✅ 스프링 Jdbc Template](https://github.com/mgyokim/Spring/commit/b11b157933e846808b76425b5c0e75248eec5518)
+>
+>             
+> ***           
+>           
+> ## [✅ JPA](https://github.com/mgyokim/Spring/commit/07d9353cbc1271af2d77ad30c825ff002278bd5a)
+>
+>
+> ***         
+>        
+> ## [✅ 스프링 데이터 JPA](https://github.com/mgyokim/Spring/commit/67f3f5e419a78bc31dd7680bc6d0da7fc49354de)
+>
+>
+> ***        
+
+# AOP
+> ## ✅ AOP가 필요한 상황
+>
+>
+> ***         
+>       
+> ## [✅ AOP 적용](https://github.com/mgyokim/Spring/commit/4b332ef4b3d61ec2556878be1f9ff903af0ac652)
+>
+
 
 
 ## --------------------------------------------------------
