@@ -1356,7 +1356,134 @@
 > 
 > ***         
 >      
-> ## [✅ 회원 웹 기능 - 등록](https://github.com/mgyokim/Spring/commit/630626cac59e74f73a1a6e7731990e8cd5071ec2)       
+> ## [✅ 회원 웹 기능 - 등록](https://github.com/mgyokim/Spring/commit/630626cac59e74f73a1a6e7731990e8cd5071ec2)        
+> 이번에는 회원 웹기능 - 등록을 만들어보도록 하겠습니다.       
+>           
+> ![image](https://user-images.githubusercontent.com/66030601/199656301-f3de6525-0a38-4f98-9359-2f0fabc51f64.png)         
+> _**MemberController**_ 에 빨간 네모표시한 코드를 작성해주었습니다.  
+> _**return**_ 은 _**members/createMemberForm**_ 으로 이동하도록 하겠습니다.
+>        
+> _**@GetMapping("members/new")**_ 에서 _**/members/new**_ 로 한 이유는,        
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199656478-1d2ca20d-fc9c-4cd3-a012-fc72b82d629b.png)          
+> 이전에 작성해둔 _**home.html**_ 에서 _**/members/new**_ 로 이동하도록 설정했기 때문입니다.         
+>            
+> ![image](https://user-images.githubusercontent.com/66030601/199656558-9d1095fd-79eb-4b56-9958-636475a7903e.png)          
+> 그리고, _**templates**_ 폴더 안에 _**members**_ 라는 폴더를 만들고, _**createMemberForm**_ 이라는 이름으로 _**html**_ 을 만들었습니다.       
+>          
+> ![image](https://user-images.githubusercontent.com/66030601/199657141-b25a279a-0b19-40f9-a0f9-219019d719a9.png)         
+> 회원 등록폼 _**HTML**_ 을 작성해주었습니다.      
+>      
+> 서버를 _**run**_ 시켜보겠습니다.       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199657461-774b2ff1-59da-4f7b-a90e-06ff6d9e75ec.png)          
+> 회원 가입을 누르면, _**members/new**_ 로 들어가집니다.     
+> 소스코드 보기를 하면,       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199657639-cc58bc13-3cd7-471a-a769-2834a3c8bd8a.png)         
+> 이렇게 방금 복사해서 작성한 _**html**_ 이 랜더링이 된 것을 확인할 수 있습니다.       
+>         
+> 지금은 코드를 다 작성하지 않아서 오류가 뜨지만,     
+>        
+> 예를 들어서 이름을 _**spring**_ 이라고 등록하면,  
+> _**name**_ 이라는 이름의 _**key**_ 와 _**value**_ 인 _**spring**_ 이 서버로 넘어가게 됩니다.       
+>        
+> 이제, 회원을 등록하는 컨트롤러를 만들어야 합니다.       
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199657847-f97ce91f-b666-4d7b-8dff-90520a1d2d56.png)        
+> _**MemberForm**_ 이라는 이름으로 컨트롤러를 생성했습니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199657906-cba58c38-88fa-4ea2-aef1-54860ee4ef8f.png)        
+> _**private String name;**_ 을 만들어주고,     
+> _**getter**_, _**setter**_ 를 만들어줍니다.         
+>          
+> 이렇게 하면,      
+>          
+> ![image](https://user-images.githubusercontent.com/66030601/199658089-ebdf150a-4dd2-40e9-86d0-9301846645c0.png)         
+> _**MemberForm**_ 의 _**name**_ 과 _**createMemberForm.html**_ 의 _**name**_ 이 매칭되면서 값이 들어올 것입니다.       
+>            
+> ![image](https://user-images.githubusercontent.com/66030601/199658304-99867590-ba0b-49e6-b7a5-043ed2159c5a.png)        
+> 그리고 실제 _**MemberController**_ 에다가 위 코드를 작성해줍니다.     
+>          
+> _**@PostMapping**_ 을 해줘야 합니다. "_**/members/new**_" 를 해줍니다.        
+> 그리고         
+>         
+> _**Member mmeber = new Member();**_          
+> _**member.setName(form.getName());_**            
+>             
+> 를 해주면 멤버가 만들어집니다.       
+>       
+> 그리고나서      
+>        
+> _**memberService.join(member);**_        
+>         
+> 으로 생성된 멤버를 넘깁니다.       
+>        
+> _**return "redirect:/";**_          
+>             
+> 그리고 회원가입이 끝낫으므로 _**return**_ 을 하는데, _**redirect**_ 를 이용해서 홈화면으로 보냅니다.         
+>        
+> 서버를 _**run**_ 시켜보겠습니다.           
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199658674-2e5218b8-b3f1-4eac-9571-730451d87aa8.png)       
+> 그리고 등록을 누르면, 홈 화면으로 넘어갑니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199658752-7cc53c08-65d8-44fe-8d57-ff5563cd6950.png)        
+> 간단하게 작동 과정을 알아보겠습니다.        
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199658910-88904a99-f8c7-4447-8e14-da022e807327.png)        
+> 먼저, 회원가입으로 들어오면, _**members/new**_ 로 들어갑니다.       
+>        
+> _**/members/new**_ 로 와서 _**@GetMapping("/members/new")**_ 이 매핑됩니다.        
+> 그러면, _**createForm()**_ 은 아무 하는 것 없이 "_**members/createMemberForm**_" 이라는 곳으로 이동을 하게 합니다.     
+>        
+> 즉, _**return**_ 한 "_**members/createMemberForm**_"를 _**templates**_ 에서 찾게됩니다.         
+>          
+> ![image](https://user-images.githubusercontent.com/66030601/199659131-1e237c2f-f3ce-4876-a0c4-6bf88403892c.png)             
+> 그러면, _**templates**_ 에서 _**members**_ 의 _**createMemberForm**_ 이 _**ViewResolver**_ 를 통해서 선택이 되고,    
+> _**thymeleaf**_ 템플릿 엔진이 해당 _**createMemberForm.html**_ 을 랜더링합니다.      
+> 그러면, 해당 _**html**_ 이 뿌려지는 것입니다.        
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199659246-b3e630fa-9fc4-4e0b-bef0-57361dfcf8de.png)         
+> _**createMemberForm.html**_ 을 보면, _**form**_ 이라는 태그가 있는데,      
+> _**form**_ 태그는 값을 입력할 수 있는 _**html**_ 태그입니다.       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199659484-ff588620-397b-491a-86cf-bda985819e86.png)         
+> 중요한 것은, _**name="name"**_ 인데, _**"name"**_ 이 서버로 넘어올 때 _**key**_ 가 됩니다.         
+>          
+> _**spring**_ 이라고 적어주고 등록버튼을 누르면, 무슨일이 생기냐면,     
+> _**action="/members/new"**_ 로 post방식으로 넘어옵니다.       
+> 그러면, _**/members/new**_ 에 post 방식으로 넘어오면 어디로 가느냐면,       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199659612-213bae3c-2a7d-4ae3-a5ce-07c6e11d0574.png)            
+> _**MemberController**_ 의 _**@PostMapping**_ 으로 넘어옵니다.       
+>         
+> ※ 기본적으로 url 창에 주소를 입력해서 엔터치는 것은 _**@GetMapping**_ 입니다. _**@GetMapping**_ 은 조회할 때 주로 씁니다.         
+>          
+> _**@PostMapping**_ 은 보통,    
+> 이렇게 데이터를 뭔가 _**<form>**_ 같은 곳에 넣어서 전달할 때는 _**@PostMapping**_ 을 씁니다.      
+> 보통 데이터를 등록할 때, _**@PostMapping**_ 을 사용합니다.         
+>       
+> 그래서 URL은 똑같지만, _**@GetMapping**_ 이냐, _**@PostMapping**_ 이냐에 따라서 위 코드처럼 다르게 매핑할 수 있습니다.       
+>        
+> 다시 과정으로 넘어와서,        
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199659839-59752131-0e5d-4c6f-a8dc-e37dba699912.png)          
+>          
+> ![image](https://user-images.githubusercontent.com/66030601/199659869-30d1aa17-06d9-4828-baf7-02b13e3bc95a.png)        
+> url은 똑같지만, 넘어온 메서드가 post 이기 때문에 _**@PostMapping**_ 이 선택되고, _**create(MemberForm form)**_ 가 호출됩니다.      
+> 그러면서 값이 들어오는데,         
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199660146-1985365c-5d50-4334-9282-b7523ee6f2bb.png)           
+> _**MemberForm**_ 의 _**name**_ 에 "_**spring**_" 이라는 값이 들어오게 됩니다.        
+> _**setName()**_ 을 통해서 들어갑니다.       
+> 값은 _**createMemberForm.html**_ 의 name값("_**spring**_") 을 보고 스프링이 _**setName()**_ 을 호출해서      
+> _**MemberForm**_ 의 _**name**_ 에 "_**spring**_"을 넣어줍니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199660395-0cd34a5e-7207-447c-b6fb-64fa5febf799.png)       
+> 그래서 _**MemberController**_ 의 _**create()**_ 에서 _**form.getName()**_ 으로 꺼내서 _**member.setName()**_ 을 해준 것입니다.     
+>        
+> 그리고나서 _**memberService.join(member);**_ 을 해서 가입이 된 것입니다.     
 >        
 > ***      
 >        
