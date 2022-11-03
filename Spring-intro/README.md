@@ -1488,6 +1488,97 @@
 > ***      
 >        
 > ## [✅ 회원 웹 기능 - 조회](https://github.com/mgyokim/Spring/commit/89b9a87412d551ae520c1cb0646bd0b003d9ab2a)           
+> 이번에는 회원 웹기능 - 조회 를 만들어 보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199672494-7941e271-c2a5-40d2-9314-c556b8cb2981.png)     
+> 이제 회원 목록을 눌렀을때 동작하도록 만들면 됩니다.     
+>     
+> 회원 목록 링크를 누르면, _**localhost:8080/members**_ 로 이동하도록 해두었습니다.   
+>     
+> _**MemberController**_ 에 코드를 작성하겠습니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199672679-7b80efb6-be62-4b06-868e-72f5c29ac891.png)        
+> 회원 목록 링크를 누르면, _**localhost:8080/members**_ 로 가게 해두었으므로,      
+>         
+> _**@GetMapping("/members")**_    
+>       
+> 를 해줍니다.       
+>     
+> 그리고 _**public String List(Model model)**_ 을 해주는데,     
+> _**memberService**_ 에서 _**findMembers();**_ 라고 하면, _**members**_ 를 다 끄집어 올 수 있습니다.        
+> 그리고 _**model.addAttribute**_ 를 해서 _**members**_ 리스트 자체를 모델에 담아서 화면(view) 템플릿에 넘길 것입니다.     
+> 넘길 곳은 return "_**member/memberList**_" 라고 했습니다.       
+>      
+> 그러면 _**member/memberList**_ 를 만들어야 합니다.     
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199675048-386d8171-8736-4ad8-8f40-cc8419f4aabd.png)        
+> _**templates**_ 폴더의 _**members**_ 폴더 안에 _**memberList.html**_ 을 생성했습니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199675180-1c696915-7b7a-49f4-98e4-1da82bb67c4e.png)        
+> _**memberList.html**_ 을 작성해주었습니다.     
+>       
+> 이 코드에서는 _**thymeleaf**_ 템플릿 엔진이 본격적으로 작동을 하는데요,   
+> 이러한 템플릿 엔진이 무엇을 해주냐면,      
+>      
+> 서버를 _**run**_ 시켜보면,      
+>          
+> ![image](https://user-images.githubusercontent.com/66030601/199675378-cd367de1-22a1-402f-bea5-ccf10a8eff36.png)       
+> 회원 목록 링크에 들어가보면, 아직 아무것도 없다.       
+>         
+> 한번, 가입을 해보겠습니다.    
+> _**spring1**_ 이라는 이름과 _**spring2**_ 라는 이름으로 회원 가입을 했습니다.     
+> 그리고나서 회원 목록을 가보면,       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199675863-91d4d4ba-3b3e-4140-b1b5-792af9663bfe.png)         
+> 이렇게 _**spring1**_, _**spring2**_ 를 볼 수 잇습니다.       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199676450-6e18a530-92f6-4634-9565-1ce8c431c14c.png)             
+> 이 페이지의 소스보기를 해보면,     
+> 빨간 네모 박스 부분이 템플릿 엔진이 랜더링 하는 부분인데,      
+>       
+> 실제 코드는 _**<tr></tr>**_ 이 하나인데, 회원가입을 2번하고 조회를 한 페이지의 소스코드에는 _**<tr></tr>**_ 이 2개로 랜더링 되어있습니다.     
+>       
+> 이것이 템플릿 언어가 랜더링 한 것입니다.      
+> 다른태그는 다 그대로고,       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199677392-899e7e96-5d1f-4664-ab67-0e24cf2c2830.png)       
+> 템플릿 언어에서 해당 _**members**_ 를 읽어들이는데,        
+> 이 $표시안에 있는 _**members**_ 는 모델안에 있는 값을 꺼내는 것입니다.         
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199677523-b6c37070-91b0-4769-b54d-ab45cbefe36e.png)         
+> _**MemberController**_ 를 보면,    
+> _**model.addAttribute**_ 로 _**key**_ 가 "_**members**_"이고,      
+> 이 _**members**_ 안에는 _**List**_ 로 모든 회원을 조회해서 담아놓았습니다.       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/199677759-493795de-920f-4841-8279-bcf3f83b8eca.png)       
+> 그러면, _**th:each**_ 라고 하면, 루프를 다 돕니다. (thymeleaf 문법)      
+> 루프를 돌면서 해당 빨간네모 로직을 실행합니다.       
+>       
+> 그러면, 루프마다,      
+> _**${members}**_ 에서 첫번째 객체를 꺼내서 _**member**_ 에 담고,      
+> 해당 _**member**_ 의 _**id**_ 와 _**name**_ 을 출력합니다.        
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199678641-aaf33dfd-3f28-409c-8c70-79700ce35f79.png)       
+> 이때, _**id**_ 를 살펴보면, _**id**_ 와 _**name**_ 이 _**private**_ 이라서 직접 접근은 안되고,     
+> _Java_ 프로퍼티 방식의 접근이라고하는      
+> _**getter**_, _**setter**_ 접근 방식으로(_**getId**_, _**getName**_) 접근해서 값을 가져와서 출력해주게 되는 것입니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199678957-4ef6197c-4406-4658-a243-c650fc9a8651.png)       
+> 그렇게 해서 최종 결과물이 이렇게 랜더링 된 것이고,      
+> 브라우져로 이것을 잘 뿌려준 것입니다.       
+>                  
+> ![image](https://user-images.githubusercontent.com/66030601/199679209-6464b09a-0484-4588-801f-ac11566153a7.png)         
+> 지금까지, 회원 조회까지 다 작성해 보았습니다.       
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199679386-1b6c5bc9-4b8a-4a6f-8729-bc1a2fc53e80.png)       
+> 데이터가 메모리에 있기 때문에      
+> 서버를 내렸다가 다시키게 되면, 데이터가 삭제됩니다.      
+>        
+> 서버를 내렸다가 회원목록을 들어가보면, 아무것도 없는 것을 확인할 수 있습니다.       
+> 메모리 안에 있기 때문에 서버를, 자바를 내려버리면, 당연히 회원 데이터가 사라집니다.      
+>       
+> 그래서 우리는 이 데이터들을 파일이나 데이터베이스에 저장을 해야합니다.      
+
                       
 # 스프링 DB 접근 기술
 > ## [✅ H2 데이터베이스 설치](https://github.com/mgyokim/Spring/commit/b3195663b9e2e5e7e6012a55bdfc5404f189b55b)
