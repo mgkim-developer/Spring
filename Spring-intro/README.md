@@ -1349,7 +1349,7 @@
 > 첫번쨰 도메인이 매핑된 컨트롤러가 있는지 찾아본 후,       
 > 매핑된게 있으므로, 해당 _**Controller**_ 가 호출되고 끝납니다.       
 >        
-> 그러면, 기존에 _**static**_ 파일에 만들어 두었던 _**index.html**_ 을 무시됩니다.      
+> 그러면, 기존에 _**static**_ 파일에 만들어 두었던 _**index.html**_ 은 무시됩니다.      
 >        
 > ![image](https://user-images.githubusercontent.com/66030601/199655035-a37aa291-3615-4153-ba68-ffda4c4fd107.png)           
 > _**home.html**_ 을 생성해서 작성해주었습니다.      
