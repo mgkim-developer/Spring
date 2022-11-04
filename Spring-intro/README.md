@@ -1730,8 +1730,383 @@
 >     
 > ***         
 >       
-> ## [✅ 순수 Jdbc](https://github.com/mgyokim/Spring/commit/c9624a88093fc355ec9ca53e1d4bd7ee78d4a946)
+> ## [✅ 순수 Jdbc](https://github.com/mgyokim/Spring/commit/c9624a88093fc355ec9ca53e1d4bd7ee78d4a946)     
+> 애플리케이션에 DB에 연동을 해서 저장하는 것을 해보겠습니다.    
+> 기존처럼 Memory에 저장하지 않고, 데이터베이스에 insert쿼리, select 쿼리를 날려서 데이터를 넣고 빼는 것을 해보겠습니다.     
+>       
+> 이번시간에는, 정말 오래된 JDBC방식으로 해보겠습니다.     
+>        
+> 먼저, _**build.gradle**_ 파일에 jdbc, h2 데이터베이스 관련 라이브러리를 추가해야 합니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199930700-db47316f-d080-4ec6-8ea6-6c38c1e5cf8b.png)       
+> _**build.gradle**_ 파일에 jdbc, h2 데이터베이스 관련 라이브러리를 추가해주었습니다.      
+>       
+> <pre><code>implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+> runtimeOnly 'com.h2database:h2'</code></pre>         
+> 코드를 보면, '_**spring-boot-starter-jdbc**_'를 볼 수 있는데,    
+> 자바는 기본적으로 db랑 붙으려면, jdbc 드라이버가 꼭 있어야 합니다. 이것을 가지고 서로 연동하는것입니다.     
+> 그리고 '_**com.h2database:h2**_' 는 뭐냐면, db랑 붙을 때, 데이터베이스가 제공하는 클라이언트가 필요한데, 이것은 h2database 클라이언트를 설정 해준것입니다.      
+>         
+> 이렇게 두 개의 라이브러리를 넣으면 되고,     
+>      
+> 이제 db에 붙으려면 접속정보 같은 것들을 설정해줘야 합니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199934436-d072ab38-5c7a-4ddc-a919-c2a13b977313.png)       
+> _**resources/application.properties**_ 에다가 스프링 부트 데이터베이스 연결 설정을 추가해주겠습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199934595-fd4024a5-e3c3-4217-aa5d-72e0406155d8.png)      
+> <pre><code>spring.datasource.url=jdbc:h2:tcp://localhost/~/test</code></pre>      
+> url은 우리가 h2 데이터베이스에 접근할때 사용하는 url을 적어주면 됩니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199934805-25ccdf68-7101-4d69-b685-b52cef9b0c94.png)         
+> 이 url과 동일하게 적어주면 됩니다.       
+> <pre><code>spring.datasource.driver-class-name=org.h2.Driver</code></pre>         
+> 그리고 _**driver-class-name**_ 이라는게 필요한데, 우리가 h2 데이터베이스로 접근할 것이기 때문에 _**org.h2.Driver**_ 를 넣어주면 됩니다.      
+>       
+> <pre><code>spring.datasource.username=sa</code></pre>     
+> 그리고 스프링부트 2.4부터는 _**spring.datasource.username=sa**_ 를 꼭 추가해주어야 합니다.    
+> 그렇지 않으면 _**Wrong user name or password**_ 오류가 발생합니다. 참고로 마지막에 공백이 들어가면 같은 오류가 발생합니다.     
+> _**spring.datasource.username=sa**_ 공백주의를 해야합니다. 공백은 모두 제거합니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199936497-a50185f4-8259-4129-a2d0-1144c69680b2.png)       
+> 이렇게만 해두면, 데이터베이스에 접근할 준비는 끝났습니다. (원래는 데이터베이스 id, pw 등도 적어야 하는데, h2 데이터베이스는 생략)      
+>      
+> _**run**_ 시키면, 스프링이 DB와 연결하는 작업을 다 해줍니다. 그리고 이제 이것을 가져다 사용하면 됩니다.      
+>       
+> 이제, _**JDBC API**_ 를 가지고 개발을 해보겠습니다.     
+>       
+> 어디를 개발할 것이냐면, 기존에 _**MemoryMemberRepository**_ 라고 _**MemberRepository**_ 인터페이스의 구현체를 만들어 놓았는데,    
+> _**MemberRepository**_ 가 인터페이스이기때문에 구현체를 개발하면 됩니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199937714-4e2f8a91-b1a8-4a38-86f3-fbea2af5663e.png)       
+> _**JdbcMemberRepository**_ 라는 이름으로 클래스를 생성하겠습니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199938045-91c6bcdf-701c-4f12-90de-5c7076686459.png)           
+> _**MemberRepository**_ 를 _**implements**_ 해주고, implement methods 를 해주겠습니다.      
+>       
+> 이제 하나씩 구현하면 됩니다.     
+>      
+> 그런데, 이렇게 _**JDBC API**_ 로 직접 코딩하는 것은 20년 전 이야기입니다.    
+> 따라서 고대 개발자들이 이렇게 고생하고 살았구나..정도로 생각하고, 참고로 보면 됩니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199938614-5cb6beae-227a-4fe3-8eae-259f5e626c65.png)        
+> 먼저, DB에 붙으려면 _**DataSource**_ 라는 것이 필요합니다.     
+> 그리고 얘를 나중에 스프링한테 주입받아야 하는데,     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199945467-cd1e8c82-2c50-4750-a744-957cf8bf21e2.png)        
+> 우리가 이것을 세팅했으므로, 스프링부트가 _**DataSource**_ 라는 것을 접속정보를 이용해서 만들어 놓습니다.     
+>      
+> 그러면, _**dataSource.getConnection()**_ 을 해서 데이터베이스 커넥션을 얻을 수 있습니다.    
+> 그러면 진짜 데이터베이스와 연결된 열린 소켓을 얻을 수 있는 것입니다.     
+> 여기다가 _**sql**_ 문을 날려서 _**db**_ 에 전달해 주는 것입니다.     
+>            
+> ![image](https://user-images.githubusercontent.com/66030601/199952976-2fc43766-63f2-4089-8bcd-43bf56d70845.png)          
+> _**DataSourceUtils**_ 를 통해서 커넥션을 획득해야합니다.     
+> 데이터베이스 트랜잭션같은게 걸리더라도 똑가은 데이터베이스 커넥션을 유지해야하는데, 그것을 유지시켜주는 역할을 합니다.   
+>    
+> <pre><code>private Connection getConnection() {
+>    return DataSourceUtils.getConnection(dataSource);
+> }</code></pre>
+> 그래서, 스프링 프레임 웍을 사용할 때에는, 꼭 이렇게 커넥션을 가져와야 합니다.    
+>       
+> <pre><code>private void close(Connection conn) throws SQLException {
+>    DataSourceUtils.releaseConnection(conn, dataSource);
+> }</code></pre>
+> 커넥션을 닫을 때도, _**DataSourceUtils**_ 를 통해서 _**release**_ 를 해야 합니다.    
+>    
+> 위에서 말한, 커넥션을 얻는 것과, 커넥션을 닫을 때 주의해야합니다.    
+>        
+> 최종적으로 작성한 _**JdbcMemberRepository**_ 의 코드입니다.     
+> <pre><code> 
+>package hello.hellospring.repository;
 >
+> import hello.hellospring.domain.Member;
+> import org.springframework.jdbc.datasource.DataSourceUtils;
+> import javax.sql.DataSource;
+> import java.sql.*;
+> import java.util.ArrayList;
+> import java.util.List;
+> import java.util.Optional;
+>
+> public class JdbcMemberRepository implements MemberRepository {
+>
+>    private final DataSource dataSource;
+> 
+>    public JdbcMemberRepository(DataSource dataSource) {
+>        this.dataSource = dataSource;
+>    }
+> 
+>    @Override
+>    public Member save(Member member) {
+>        String sql = "insert into member(name) values(?)";
+> 
+>        Connection conn = null;
+>        PreparedStatement pstmt = null;
+>        ResultSet rs = null;
+> 
+>        try {
+>            conn = getConnection();
+>            pstmt = conn.prepareStatement(sql,
+>                    Statement.RETURN_GENERATED_KEYS);
+> 
+>            pstmt.setString(1, member.getName());
+> 
+>            pstmt.executeUpdate();
+>            rs = pstmt.getGeneratedKeys();
+> 
+>            if (rs.next()) {
+>                member.setId(rs.getLong(1));
+>            } else {
+>                throw new SQLException("id 조회 실패");
+>            }
+>            return member;
+>        } catch (Exception e) {
+>            throw new IllegalStateException(e);
+>        } finally {
+>            close(conn, pstmt, rs);
+>        }
+>    }
+> 
+>    @Override
+>    public Optional<Member> findById(long id) {
+>        String sql = "select * from member where id = ?";
+> 
+>        Connection conn = null;
+>        PreparedStatement pstmt = null;
+>        ResultSet rs = null;
+> 
+>        try {
+>            conn = getConnection();
+>            pstmt = conn.prepareStatement(sql);
+>            pstmt.setLong(1, id);
+> 
+>            rs = pstmt.executeQuery();
+> 
+>            if(rs.next()) {
+>                Member member = new Member();
+>                member.setId(rs.getLong("id"));
+>                member.setName(rs.getString("name"));
+>                return Optional.of(member);
+>            } else {
+>                return Optional.empty();
+>            }
+> 
+>        } catch (Exception e) {
+>            throw new IllegalStateException(e);
+>        } finally {
+>            close(conn, pstmt, rs);
+>        }
+>    }
+> 
+>    @Override
+>    public Optional<Member> findByName(String name) {
+>        String sql = "select * from member where name = ?";
+> 
+>        Connection conn = null;
+>        PreparedStatement pstmt = null;
+>        ResultSet rs = null;
+> 
+>        try {
+>            conn = getConnection();
+>            pstmt = conn.prepareStatement(sql);
+>            pstmt.setString(1, name);
+> 
+>            rs = pstmt.executeQuery();
+> 
+>            if(rs.next()) {
+>                Member member = new Member();
+>                member.setId(rs.getLong("id"));
+>                member.setName(rs.getString("name"));
+>                return Optional.of(member);
+>            }
+>            return Optional.empty();
+>        } catch (Exception e) {
+>            throw new IllegalStateException(e);
+>        } finally {
+>            close(conn, pstmt, rs);
+>        }
+>    }
+> 
+>    @Override
+>    public List<Member> findAll() {
+>        String sql = "select * from member";
+> 
+>        Connection conn = null;
+>        PreparedStatement pstmt = null;
+>        ResultSet rs = null;
+> 
+>        try {
+>            conn = getConnection();
+>            pstmt = conn.prepareStatement(sql);
+> 
+>            rs = pstmt.executeQuery();
+> 
+>            List<Member> members = new ArrayList<>();
+>            while(rs.next()) {
+>                Member member = new Member();
+>                member.setId(rs.getLong("id"));
+>                member.setName(rs.getString("name"));
+>                members.add(member);
+>            }
+> 
+>            return members;
+>        } catch (Exception e) {
+>            throw new IllegalStateException(e);
+>        } finally {
+>            close(conn, pstmt, rs);
+>        }
+>    }
+> 
+>    private Connection getConnection() {
+>        return DataSourceUtils.getConnection(dataSource);
+>    }
+> 
+>    private void close(Connection conn, PreparedStatement pstmt, ResultSet rs)
+>    {
+>        try {
+>            if (rs != null) {
+>                rs.close();
+>            }
+>        } catch (SQLException e) {
+>            e.printStackTrace();
+>        }
+>        try {
+>            if (pstmt != null) {
+>                pstmt.close();
+>            }
+>        } catch (SQLException e) {
+>            e.printStackTrace();
+>        }
+>        try {
+>            if (conn != null) {
+>                close(conn);
+>            }
+>        } catch (SQLException e) {
+>            e.printStackTrace();
+>        }
+>    }
+>    private void close(Connection conn) throws SQLException {
+>        DataSourceUtils.releaseConnection(conn, dataSource);
+>    }
+> }</code></pre>     
+>     
+> 이제 서버를 돌리면 될까요?     
+> 안됩니다.     
+>       
+> 왜냐하면, _**Configuration**_ 해줘야 하기 때문입니다.    
+> 우리가 지금까지 저장할 때는 메모리에 저장했었습니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199985816-ce12865d-e40d-4aab-8214-613f98b906a5.png)        
+> 즉, _**MemoryMemberRepository**_ 를 사용하고 있었습니다.      
+>      
+> 이점은 _**SpringConfig**_ 에서도 확인할 수 있는데요,     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199985987-c4c33f37-9be6-4da0-9f76-9e44871a5f23.png)        
+> _**MemoryMemberRepository**_ 를 스프링빈으로 등록해서 사용했었습니다.       
+> 이것을 방금 만든, _**JdbcMemberRepository**_ 로 바꿉니다.          
+>         
+> 그리고, 작성해둔 _**JdbcMemberRepository**_ 를 살펴보면,      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199986309-57574c7f-de50-4cd3-b533-a01dff4a39b4.png)        
+> _**DataSource**_ 를 넣어줘야하는데,     
+>      
+> 이것은 스프링이 제공을 해주는데, 어떻게 제공을 해주냐면,       
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199986472-3690e300-17e1-446b-a974-a17888695cb5.png)       
+> 이렇게 작성을 하면 됩니다.   
+>      
+> _**@Configuration**_ 한 것도 스프링빈으로 관리가 되기 때문에,   
+> 이렇게 작성을 해두면, 스프링이 자체적으로 스프링빈을 생성해줍니다.      
+>       
+> 즉, 스프링이 _**dataSource**_ 를 스프링빈으로 등록해준 것입니다.       
+>        
+> 오직 _**JdbcMemberRepository**_ 를 만들어서 _**MemberRepository**_ 인터페이스를 구현했습니다.   
+> 그리고, _**SpringConfig**_ 에서 스프링이 제공하는 _**@Configuration**_ 만 수정했습니다.    
+> 스프링 빈으로 등록하는 부분을 수정했을 뿐입니다.    
+>     
+> 이외 기존의 다른 어떤 코드도 변경하지 않았습니다.      
+>       
+> 이제 서버를 실행해보겠습니다.       
+> 실행하기전에 _**h2 DB**_ 를 실행해두는 것을 잊으면 안됩니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199990586-d8b3caf8-27c8-41a7-acfe-392a7207f9dd.png)              
+> _**h2 DB**_ 를 실행하고,      
+>       
+> 서버를 실행하고, _**localhost:8080**_ 에 접속해보겠습니다.       
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199990801-f34d5534-8133-4eab-b9d1-6cd4343ea821.png)        
+> 기존에 h2 DB에 쿼리문으로 'spring'과 'spring2'를 작성했었습니다.     
+> 회원 목록을 확인해보겠습니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/199991132-da88f49a-d58c-404a-9b7e-522ff6609d50.png)        
+> DB에 저장해둔 회원이름을 확인할 수 있습니다.      
+>       
+> 이번에는 회원 가입을 해보겠습니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199992710-4d56ab91-18a7-40d7-bd55-8d532aa32782.png)       
+> jpa 라는 이름으로 등록했습니다.     
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/199992930-bd2fccd9-ebf6-491a-89c6-9f56aabaa9cc.png)         
+> 회원목록을 확인해보면, jpa가 저장되어있습니다.      
+>       
+> 이번에는 DB Console에서 확인해보겠습니다.     
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/199994059-210a77e9-0fa4-4ae6-9b09-09992c789e54.png)        
+> jpa가 잘 등록되어 있습니다.     
+>       
+> 애플리케이션에서 데이터베이스에 접근한 것이 굉장히 잘 동작하고 있는 것을 확인할 수 있습니다.  
+>       
+> ## 스프링을 사용하는 이유      
+> ![image](https://user-images.githubusercontent.com/66030601/199994555-8088f439-2607-4595-8dde-ef853bd6af7a.png)       
+> 스프링을 쓰는 이유가 바로 이런 것 입니다.      
+>       
+> 객체 지향 설계가 좋다좋다 하지만, "왜 좋은가?" 라고 한다면,  
+> 이렇게 인터페이스를 두고 구현체를 바꿔끼기 하는 것을 "다형성을 활용한다" 라고 이야기 할 수 있는데,   
+>     
+> 스프링은 이것을 굉장히 편리하게 할 수 있도록 스프링 컨테이너가 이것을 지원해주는 것입니다.      
+>      
+> 그리고 소위 말하는 "_**DI**_" (의존성 주입) 덕분에 이러한 것을 굉장히 편리하게 하는 것입니다.       
+>      
+> 기존의 코드는 손대지 않고,     
+> 오직 애플리케이션을 설정하는 코드만 수정하고,   
+> 나머지 실제 어플리케이션과 관련된 코드는 하나도 손대지 않고 구현 클래스를 바꿀 수 있습니다.      
+>       
+> 이것을 편리하게 해주는 것이 스프링의 장점입니다.  
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/199999210-2cf8d49b-452b-4ed5-b267-3a747076944c.png)       
+> _**MemberService**_ 는 _**MemberRepository**_ 를 의존하고 있습니다.     
+>       
+> MemberRepository 인터페이스는 구현체로     
+> - _**MemoryMemberRepository**_        
+> - _**JdbcMemberRepository**_     
+>     
+> 가 있습니다.    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200016680-d55c7dcf-ffb0-4938-89c1-dc19bf634a0d.png)       
+> 그런데 스프링 컨테이너에서 기존에는 _**MemoryMemberRepository**_ 를 스프링 빈으로 등록했었다면,     
+>      
+> 이제는, _**MemoryMemberRepository**_ 를 빼고,   
+> _**Jdbc**_ 버전의 _**JdbcMemberRepository**_ 를 스프링 빈으로 등록했습니다.     
+>      
+> 그리고나면 나머지는 하나도 손댈 것이 없습니다.     
+>     
+> 구현체가 _**JdbcMemberRepository**_ 로 바뀌어서 서버가 돌아갑니다.    
+>      
+> ## SOLID (객체 지향 설계)      
+> ![image](https://user-images.githubusercontent.com/66030601/200018015-071908e4-f5e4-4309-8172-9a5be9a86377.png)       
+> _**SOLID**_ 라는 객체지향 프로그래밍 및 설계의 다섯 가지 기본 원칙이 있는데,     
+>       
+> 이중에서 _**OCP**_(개방-폐쇄 원칙)는     
+> 객체 지향에서 말하는 다형성 이라는 개념을 잘 활용하면, 잘 지킬 수 있습니다.     
+> 우리가 했던 것 처럼 기능을 완전히 변경을 해도, 애플리케이션 전체를 수정할 필요가 없는 것 입니다.       
+>      
+> 조립하는 코드는 어쩔 수 없이 수정해야하지만,      
+> 실제 어플리케이션이 동작하는데에 필요한 코드들은 하나도 변경하지 않을 수 있습니다.    
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200020701-ad9ae592-8564-43dd-ada9-acb5a9fbcbfd.png)      
+> 이것은 개방 폐쇄 원칙이 지켜진 것이라고 할 수 있습니다.     
+>
+
 >
 > ***         
 >         
