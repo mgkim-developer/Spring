@@ -2104,14 +2104,151 @@
 > 실제 어플리케이션이 동작하는데에 필요한 코드들은 하나도 변경하지 않을 수 있습니다.    
 >       
 > ![image](https://user-images.githubusercontent.com/66030601/200020701-ad9ae592-8564-43dd-ada9-acb5a9fbcbfd.png)      
-> 이것은 개방 폐쇄 원칙이 지켜진 것이라고 할 수 있습니다.     
->
-
+> 이것은 개방 폐쇄 원칙이 지켜진 것이라고 할 수 있습니다.
 >
 > ***         
 >         
 > ## [✅ 스프링 통합 테스트](https://github.com/mgyokim/Spring/commit/5878a71caae55232fccac0e1aa415350d3170d9e)
+> 이전시간에 만들었던 _**JdbcMemberRepository**_ 는 DB까지 연결이 됩니다.      
+>       
+> 그러면, 테스트도, 스프링까지 다 올리고 DB까지 연결해서 동작하는 통합 테스트를 해보아야 합니다.     
+> 스프링 통합 테스트를 해보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200104140-605754b6-8ab2-4019-9a00-efc5a5bdf35d.png)         
+> 이전에 했던, 이런 테스트들을 보면,      
+> 전혀 스프링과 관련이 없는 테스트들입니다.      
+>      
+> 순수한 _**Java**_ 코드를 가지고 테스트 한 것입니다.      
+>       
+> 그런데, 지금은 순수한 _**Java**_ 코드만 가지고 테스트 할 수 없습니다.      
+> 왜냐하면, 데이터베이스 커넥션 정보도 스프링 부트가 들고있기 때문입니다.      
+>       
+> 그래서 지금부터는, 테스트를 스프링과 엮어서 해볼 것입니다.       
+>         
+> 우선, 기존에 만들어 두었던, _**MemberServiceTest**_ 를 살펴보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200104257-af687571-4aeb-4475-a786-bfdab0067445.png)         
+> 이 테스트는 메모리에 저장하는 테스트이기 때문에 _**Java**_ 뜨는 시간만 제외하면 거의 시간소요가 없습니다.    
+> 이것은 _**JVM**_ 안에서 끝나는 테스트입니다.      
+>       
+> 이번에는 DB까지 연결해서 테스트를 만들어보겠습니다.      
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/200104289-5ee85e94-09ca-4d3b-9b7d-0dc4cda790d9.png)         
+> 우선은, _**MemberServiceTest**_ 를 복사 붙여넣기해서 이름이 _**MemberServiceIntegrationTest**_ 라는 클래스를 생성했습니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200104317-24fc1736-85ec-4838-b205-e18a63f43371.png)        
+> 스프링 컨테이너와 테스트를 함께 실행하도록 하기위해 _**@SpringBootTest**_ 를 붙여주고,     
+> 테스트 시작 전에 트랜잭션을 시작하고, 테스트 완료 후에 항상 롤백 하도록하여 DB에 데이터를 남기지 않게 해서      
+> 다음 테스트에 영향을 주지 않게 하기위해 _**@Transactional**_ 를 붙이면 됩니다.       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/200104424-29608242-5128-4c39-a30e-614ad4030903.png)         
+> 그리고 이 부분을 보면, 직접 객체를 생성해서 넣어주었는데,     
+> 이제는 스프링 컨테이너에게 "_**MemberService**_, ***MemberRepository***를 내놔!!" 라고 해야합니다.      
+> 파란색 표시된 부분은 지워주도록 하겠습니다.      
+>       
+> 테스트는, 제일 끝 단에 있는 것이기 때문에, 테스트 코드를 만들 때는, 제일 편한 방법으로 쓰면 됩니다.       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/200104494-b8cdb755-011b-4fc5-a8b5-253ab99746d2.png)        
+> _**@Autowired**_ 를 바로 넣어줘도 됩니다.      
+> 테스트를 다른데서 가져다 쓸 것이 아니기 때문에, 테스트는 내가 필요한 것을 인젝션해서 사용하고 끝이기 때문에,    
+> 테스트 케이스를 작성할 때는 필드 기반으로 _**@Autowired**_ 를 받는 것이 편합니다.      
+>        
+> 그리고, 중요한게 있는데,      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200104522-87c7c910-23f7-44e0-8f44-6630c5d9366b.png)         
+> 이 부분을 _MemoryMemberRepository_ 로 해주는 것이 아니라, _**MemberRepository**_ 로 바꿔야합니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200104574-67828d58-afba-41ff-8db6-69a46ce15ac6.png)        
+> _**@AfterEach**_ 도 지워줍니다.       
+> _**@AfterEach**_ 가 필요했던 이유는, 메모리 DB에 있는 데이터를 다음 테스트에 영향이 없도록 지워주기 위함이었는데,      
+> 이제 _**@Transactional**_ 을 사용할 것이기 때문에 필요없습니다.       
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/200104618-c7166d7e-a917-4378-9417-52f054ff6b2a.png)        
+> 그 다음, 회원가입 로직 그대로 두고, 중복 회원 예외 로직도 그대로 납둡니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200104630-b323a748-ef41-415e-995c-ff66c37fceaf.png)        
+> 일단, 회원 가입테스트를 돌려보겠습니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200104642-86276211-cc95-4e3c-95d0-ddb782704710.png)       
+> 회원가입을 하는데, "이미 존재하는 회원입니다."라는 예외가 발생했습니다.     
+>       
+> 이유를 살펴보겠습니다.      
+> 우리가 사용하는 DB를 살펴보면,      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200104756-de9d91f0-c606-4e55-bd53-5cf6d70173e2.png)      
+> "spring" 이라는 이름의 데이터가 저장 되어있습니다.     
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200104785-96cb024f-6eae-44f5-a6d0-22cc639542e9.png)       
+> 그런데, 테스트를 할 때, "spring" 이라는 이름으로 회원가입을 하도록했으므로     
+> "이미 존재하는 회원입니다." 라는 예외가 발생하는 것입니다.     
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/200104898-5e204bdf-3b35-4104-8383-4915ed83a902.png)         
+> DB의 데이터 완전히 지워주도록 하겠습니다.      
+>        
+> "운영하는 DB의 데이터를 너무 막지우는거 아닌가?" 라는 의문이 들 수도 있는데,     
+> 실제로는 테스트 전용 DB를 따로 구축해서 테스트 전용 DB의 데이터를 지우기 때문에 너무 걱정하지 않아도 됩니다.      
+>       
+> 이 상태에서    
+> _**@Transactional**_ 만 주석처리하고 다시 회원가입 테스트를 돌려보겠습니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200105050-9c82abad-0e10-49ca-a3ed-6909dbee3c01.png)         
+> 기존에 _**MemoryMemberRepository**_ 를 테스트 할 때와 다르게 테스트를 하는데 스프링이 올라왔습니다.      
+> 그리고 _**@Configuration**_ 도 다 올라왔습니다.      
+> 그리고 테스트가 끝나면 스프링이 내려갑니다.       
+>      
+> 회원 가입 테스트가 정상적으로 통과되었습니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200105089-dc9888bd-b524-4947-8b84-81e40ff5bf8d.png)       
+> DB를 확인해보면, spring이 정상적으로 저장되었습니다. (ID는 DB매커니즘에 의해 알아서 부여되므로 신경쓰지 말도록합시다.)     
+>       
+> 그런데, _**Test**_ 는 반복할 수 있어야 하는데, 이제 다시 실행하면,      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200105119-1405b5d1-7116-4785-a2ff-f8e3f952a6f4.png)        
+> 이렇게 오류가 발생합니다.      
+>       
+> DB에 "spring" 저장한게 남아있기 때문입니다.      
+>      
+> 그러면 또 전에 했던것 처럼 _**@AfterEach**_, _**@BeforeEach**_ 이런식으로 해줘야 하는 걸까요?      
+>       
+> _**@Transactional**_ 을 사용하면 해결할 수 있습니다.    
+>       
+> _**@Transactional**_ 은 테스트 시작 전에 트랜잭션을 시작하고, 테스트 완료 후에 항상 롤백 하도록하여      
+> DB에 데이터를 남기지 않도록하여 다음 테스트에 영향을 주지 않게 해줍니다.       
+>       
+> 그런데, 지금은 _**@Transactional**_ 의 역할을 보기위해,  주석처리를 하고 테스트를 돌렸기 때문에 저러한 예외가 발생한 것입니다.     
+>       
+> DB에 인서트 쿼리를 날려도 커밋을 하기 전까지는 DB에 반영되지 않습니다.     
+> 커밋을 자동으로 하는 오토커밋 모드로 설정할 수도 있지만,      
+> 일반적으로는 DB에 인서트 쿼리를 날려도 커밋을 하지 않으면 DB에 반영되지 않습니다.       
+>       
+> _**@Transactional**_ 을 사용하면, 테스트(DB에 인서트 쿼리 날리고)를 끝내고 커밋이 아니라 롤백을 하는 것입니다.     
+>      
+> 그러면 DB에 인서트 쿼리를 날렸어도 롤백을 하면 DB에 인서트 쿼리 데이터가 반영되지 않습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200105871-66370218-c24e-42dd-bff3-1f5791d00566.png)         
+> 우선, 한번은 다시 DB에 저장된 데이터를 지워주겠습니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200105885-cbb011ef-2c3a-45e1-a92e-0e29be989711.png)         
+> 그리고 _**@Transactional**_ 주석을 해제해주겠습니다.    
+> 돌려보겠습니다.      
+>         
+> ![image](https://user-images.githubusercontent.com/66030601/200105907-4ea630e3-66a7-4e24-9cc7-bfdc62efe484.png)        
+> 회원가입 테스트를 할때, 인서트 쿼리를 날려도, DB에는 반영하지 않고 롤백한 것을 확인할 수 있습니다.      
+> 반복해서 테스트를 할 수 있습니다.     
+>       
+> 이번에는 전체를 테스트해보겠습니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200105931-bb670dc2-9109-4137-aea4-ad128d7bc77e.png)       
+> 전체 테스트를 성공했습니다.      
+>       
+> 이렇게해서 통합테스트에 대해서 알아보았습니다.      
+>        
+> - _**@SpringBootTest**_ : 스프링 컨테이너와 테스트를 함께 실행합니다. 
+> - _**@Transactional**_ : 테스트 케이스에 이 애노테이션이 있으면, 테스트 시작 전에 트랜잭션을 시작하고, 테스트 완료 후에 항상 롤백합니다. 이렇게하면 DB에 데이터가 남지 않으므로 다음 테스트에 영향을 주지 않습니다.      
+>       
 >
+> ※ "그러면 통합테스트말고, 순수하게 자바코드로만 하는 단위테스트는 필요 없는 것 아닌가요?"     
+> - 가급적이면 순수한 단위테스트가 훨씬 좋은 테스트일 확률이 높습니다. 왜냐하면 단위마다 쪼개서 테스트를 할 수 있기 때문입니다. 스프링 컨테이너 없이 테스트를 할 수 있도록 하면, 좋은 테스트를 할 수 있을 확률이 높습니다.
 >
 > ***         
 >       
