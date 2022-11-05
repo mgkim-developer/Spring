@@ -2253,7 +2253,118 @@
 > ***         
 >       
 > ## [✅ 스프링 Jdbc Template](https://github.com/mgyokim/Spring/commit/b11b157933e846808b76425b5c0e75248eec5518)
+> 이번에는 _**Jdbc Template**_ 를 사용해보겠습니다.     
+> 설정은, 순수 _**Jdbc**_ 를 공부할 때 했던 것과 동일하게 환경설정 하면 됩니다.    
+> ![image](https://user-images.githubusercontent.com/66030601/200117846-b1bf8179-4042-43e8-92ba-23c5916ed4fa.png)           
+> _**build.gradle**_ 파일에 _**jdbc**_, _**h2 데이터베이스**_ 관련 라이브러리를 추가해주면 됩니다.    
+> <pre><code>implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+>	runtimeOnly 'com.h2database:h2' </code></pre>       
+> 이렇게 해주었습니다.    
+>     
+> 스프링 _**JdbcTemplate**_ 는 _**MyBatis**_ 와 비슷한 라이브러리인데,     
+> _**JDBC API**_ 에서의 반복적인 코드를 대부분 제거해줍니다.   
+> 하지만 _**SQL**_ 은 직접 작성 해야합니다.     
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200122999-3dc508c8-2c17-47bf-9188-e7c24d83f526.png)      
+> 우선, _**JdbcTemplateMemberRepository**_ 라는 이름으로 클래스를 생성했습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123049-50384ba1-862a-45be-b623-bc4ebe5eb8fe.png)       
+> 그리고 _**implements MemberRepository**_ 를 했습니다.     
+> 그후, _**MemberRepository**_ 의 메서드를 오버라이딩 했습니다.      
+>      
+> 이제 코드를 작성해보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123172-344b1212-3d9d-4317-9b1f-9c33980e9c34.png)       
+> 먼저, _**JdbcTemplate**_ 이 있어야 합니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123251-4edc6df1-fb56-4dab-ae78-6a3bf6214c0e.png)       
+> 그리고 얘는 인젝션을 받을 수 없기 때문에 _**DataSource**_ 로 인젝션을 받아야 합니다.      
+> 이렇게 작성해주면 됩니다.     
+>     
+> 그리고 참고로,      
+> 생성자가 딱 1개만 있으면, 스프링빈으로 등록이 되기 때문에 _**@Autowired**_ 를 생략할 수 있습니다.      
+>      
+> 위의 코드처럼 작성하면,     
+> 스프링이 _**DataSource**_ 를 자동으로 인젝션 해줍니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123472-8fed05e8-ae6f-4382-9d4a-91869e34b5c1.png)         
+> 이번에는 조회하는 쿼리를 먼저 작성해보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123492-2bd96f3d-ac71-46ad-836f-06806f1bd767.png)        
+> <pre><code>SELECT * FROM MEMBER WHERE ID = ?</code></pre>       
+> 의 결과가 나오는 것을 로우 매퍼라는 것으로 매핑을 해줘야 합니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123611-8f70b432-1303-4575-8e24-f17b4551bccd.png)       
+> _**JdbcTemplateMemberRepository**_ 밑에 이렇게 _**RowMapper**_ 를 작성했습니다.      
+>       
+> 그런데 이 코드를 람다로 바꿀 수 있습니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200123642-82b672d8-fbbe-4f8d-8434-5129623181ee.png)       
+> opt + enter 를 해서 _**Replace with lambda**_ 를 눌러주겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123741-6038fc08-4980-4a8a-96e3-b68502f47a2c.png)       
+> 이렇게 람다스타일로 바꿔주었습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200123766-2d8adb3a-aa8b-4a90-955f-05c5e6503078.png)      
+> 이렇게 만든 _**memberRowMapper()**_ 를 앞서 만든 _**findById**_ 가 _**return**_ 할 _**result**_ 의 두번째 파라미터로 넣어줍니다.      
+>       
+> 그리고, _**result**_ 로 꺼내면 _**list**_ 로 나오는데,     
+> _**return result.stream().findAny();**_ 를 해서 _**Optional**_ 로 반환합니다.       
+>       
+> 이 코드를 _**Jdbc**_ 랑 비교해보면,     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200124008-8ff13be2-8718-42cf-a305-b520fd8d87f4.png)        
+> 죄측처럼 엄청 길었던 코드를 _**jdbcTemplate**_ 를 사용해서 아주 줄이고 줄인 결과입니다.     
+> _**jdbcTemplate**_ 라이브러리를 사용한 것입니다.      
+>      
+> 이번에는 _**save()**_ 를 작성해보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200124100-581457a8-7ce0-4e01-b8ee-06271ba2e44e.png)      
+> _**SimpleJdbcInsert**_ 라는 것을 사용하면, 쿼리를 짤 필요가 없습니다.     
+> 테이블명 "_**member**_"과, _**primary key**_ 인 "_**id**_"와 "_**name**_"을 알고 있기 때문에 _**INSERT**_ 쿼리를 만들 수 있는데,     
+> _**SimpleJdbcInsert**_ 로 인해서 자동으로 _**INSERT**_ 문이 만들어집니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200124178-dad82154-841f-4bb7-b570-d68f0e77abeb.png)       
+> 그리고, _**excuteAndReturnKey**_ 에서 _**key**_ 를 받고,      
+> 해당 _**key**_ 를 가지고 _**member**_ 에다가 _**setId**_ 해서 _**key.LongValue()**_ 를 넣어주도록 했습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200124911-67c0f51a-cd16-4a8e-91b5-1bfa7984e7df.png)       
+> _**findByName**_ 같은 경우에는 _**findById**_ 에서 _**where**_ 를 _**name**_ 으로 바꿔주면 됩니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200124945-cf065e59-2528-41b9-a9a2-75f33bcc99f7.png)        
+> _**findAll**_ 은 아주 간단합니다.      
+> _**SELECT * FROM MEMBER WHERE NAME**_ 을 하고, _**memberRowMapper()**_ 를 해주면,     
+> 객체 생성에 대한 것은 _**memberRowMapper()**_ 에서 콜백으로 정리가 됩니다.     
+> 여기서 쭉 멤버가 생성되서 넘어옵니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200125081-00ff263d-dbb3-4486-9761-4637ec5a0005.png)       
+> 이렇게 작성을 완료했습니다.      
+>      
+> 이제 조립을 해줄 차례입니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200125108-bcbb681e-07ba-4381-ab30-8c37a185510e.png)       
+> _**SpringConfig**_ 에서    
+> <pre><code>return new JdbcTemplateMemberRepository(dataSource);</code></pre>     
+> 를 해주었습니다.     
+>      
+> 테스트를 해보겠습니다.     
+>      
+> 이전에, 스프링 통합테스트를 만들어 놓았었습니다.      
+> 스프링 통합 테스트를 돌려보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200125208-883ccd57-5850-4a4a-a3c9-cbdf8c6a33b5.png)       
+> _**jdbcTemplate**_ 버전으로 바꾼,     
+> 가입과 조회가 DB까지 연동되어 테스트가 성공적으로 통과되었습니다.      
+>      
+> 프로덕션이 커지면 테스트코드를 잘 짜는 것이 매우 중요해집니다.      
+>      
+> 작은 버그 하나가 기업에게는 정말 수십억원의 피해로 돌아올 수 있습니다.      
+> 테스트 코드의 중요성을 인식하고 테스트 케이스, 코드를 잘 작성하도록 끊임없이 고민해야합니다.      
 >
+>      
+> 
+>       
+> 
 >             
 > ***           
 >           
