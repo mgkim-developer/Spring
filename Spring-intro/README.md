@@ -2359,17 +2359,246 @@
 > 프로덕션이 커지면 테스트코드를 잘 짜는 것이 매우 중요해집니다.      
 >      
 > 작은 버그 하나가 기업에게는 정말 수십억원의 피해로 돌아올 수 있습니다.      
-> 테스트 코드의 중요성을 인식하고 테스트 케이스, 코드를 잘 작성하도록 끊임없이 고민해야합니다.      
->
->      
-> 
->       
-> 
+> 테스트 코드의 중요성을 인식하고 테스트 케이스, 코드를 잘 작성하도록 끊임없이 고민해야합니다.
 >             
 > ***           
 >           
 > ## [✅ JPA](https://github.com/mgyokim/Spring/commit/07d9353cbc1271af2d77ad30c825ff002278bd5a)
+> 이전에 _**Jdbc**_ 를 해보고, _**JdbcTemplate**_ 를 써봤는데,   
+> _**Jdbc**_ 에서 _**JdbcTemplate**_ 로 바꿔보니, 개발해야하는 반복적인 코드가 확 줄었던 경험을 해보았습니다.     
+>       
+> 그런데, 아직도 해결이 안되는 것이 하나 있습니다.      
+>      
+> "SQL은 결국 개발자가 직접 작성을 해야 한다는 것" 입니다.     
+>    
+> 이 문제를 해결할 수 없을까요?     
+>      
+> _**JPA**_ 라는 기술을 사용하면 _**SQL**_ 쿼리도 _**JPA**_ 가 자동으로 처리를 해줍니다.    
+>      
+> _**JPA**_ 를 사용하면 개발 생산성을 크게 높일 수 있습니다.     
+> 마치 우리가 _**MemoryMemberRepository**_ 를 사용했던 것 처럼     
+> 객체를 메모리에 넣듯이 _**JPA**_ 에 집어넣으면,     
+> _**JPA**_ 가 중간에 DB에 _**SQL**_ 을 날리고, DB를 통해서 데이터를 가져오는 것을 처리해줍니다.      
+>       
+> _**JPA**_ 가 단순히 _**SQL**_ 을 만들어 주는 것을 넘어서서,     
+> _**JPA**_ 를 사용하면, _**SQL**_ 보다 객체 중심으로 고민 할 수가 있게 됩니다.      
+>       
+> 즉, _**JPA**_ 를 사용하면, _**SQL**_ 과 데이터 중심의 설계에서 객체 중심의 설계로 패러다임을 전환할 수 있습니다.     
+> 그래서, _**JPA**_ 를 사용하면, 개발 생산성을 크게 높을 수 있습니다.     
+>       
+> ## JPA 
+> 
+> - _**JPA**_ 는 기존의 반복 코드는 물론이고, 기본적인 SQL도 JPA가 직접 만들어서 실행해줍니다.
+> - _**JPA**_ 를 사용하면, SQL과 데이터 중심의 설계에서 객체 중심의 설계로 패러다임을 전환 할 수 있습니다.
+> - _**JPA**_ 를 사용하면 개발 생산성을 크게 높일 수 있습니다.      
+>       
+> 우선, _**JPA**_ 를 사용하려면 _**build.gradle**_ 파일에 _**JPA**_, _**H2**_ 데이터베이스 관련 라이브러리를 추가해야합니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200160820-75f5e6b5-38fd-404b-a318-3e718d1edf16.png)      
+> <pre><code>spring-boot-starter-data-jpa</code></pre>     
+> 이것에는 내부에 _**jdbc**_ 관련 라이브러리를 포함합니다.   
+> 따라서 기존에 작성해둔 _**jdbc**_ 라이브러리는 제거 해도됩니다.     
+>      
+> 그리고 이번에는 스프링 부트에 _**JPA**_ 설정을 추가 해줘야합니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200160878-da25ca0a-fb95-4d00-a7d4-99c815648abb.png)       
+> <pre><code>spring.jpa.show-sql=true</code></pre>      
+> - _**show-sql**_ : 이렇게 true로 하면 JPA가 날리는 SQL을 볼 수가 있습니다.     
+>    
+> <pre><code>spring.jpa.hibernate.ddl-auto=none</code></pre>     
+> - _**ddl-auto**_ : jpa를 사용하면 객체를 보고 jpa가 테이블도 다 만들어줍니다.        
+>            
+> 그런데, 우리는 이미 테이블을 만들어놓았고, 만들어진것을 사용할 것이기 때문에, 자동으로 테이블을 생성해주는 기능은 _**none**_ 으로 끄고 시작하도록 하겠습니다.(_**create**_ 로 하면 자동생성)      
+>         
+> _**build.gradle**_ reload 로 라이브러리 로딩이 끝나면,      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200161449-debeb8be-da31-4915-b067-693b8430abd9.png)       
+> ![image](https://user-images.githubusercontent.com/66030601/200161461-8af34416-de1e-4b18-bcb9-5d4c7c10a893.png)       
+> _**jpa**_ 라이브러리와 _**hibernate**_ 라이브러리가 로딩이 되어있어야 합니다.      
+>      
+> _**JPA**_ 라는 것은 인터페이스입니다.     
+> 구현체로 _**hibernate**_ 등의 구현 기술이 있는 것입니다.      
+>       
+> 그중에서 우리는 거의 _**JPA**_ 인터페이스와 _**hibernate**_ 만 쓴다고 보면 됩니다.     
+>      
+> _**JPA**_ 라는 것은 _**Java**_ 진영의 표준 인터페이스입니다.      
+>      
+> 구현은 여러 업체들이 하는 것입니다.     
+> 각 업체마다 성능이 더 좋거나, 쓰기 편하거나 등의 장단점이 있는 것입니다.      
+>      
+> _**JPA**_ 는 객체와 _**ORM**_ 이라는 기술로 정의할 수 있습니다.      
+> O는 _**Object**_, R은 _**Relational**_, M은 _**Mapping**_ 입니다.      
+>      
+> 즉, 객체와 관계형 데이터베이스의 테이블을 매핑한다는 뜻입니다.     
+> 그래서, _**JPA**_ 를 사용하려면 먼저 엔티티라는 것을 매핑 해야합니다.     
+> 매핑은 어노테이션으로 합니다.      
+>      
+> _**Member**_ 클래스에 작성해보겠습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200161563-5c514e04-8e79-4a70-89b5-e1237d3762f8.png)       
+> _**@Entity**_ 라고 적어주면,   
+> "아! 이제 이것은 _**JPA**_ 가 관리하는 엔티티구나!" 가 되는 것입니다.       
+> 즉, _**@Entity**_ 를 달아서 엔티티라고 알려주는 것입니다.      
+>      
+> 그리고 _**Primary Key**_ 도 매핑해줘야하는데,      
+>      
+> 아래 DB를 살펴봅시다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200161605-c9be4def-799a-426a-aa57-cdd97667fe87.png)      
+> DB에 데이터를 저장하면 ID가 generate 됩니다.     
+> 쿼리를 잘 보면, 쿼리에 id를 넣는 것이 아니라,   
+> DB에 값을 넣으면, DB가 ID를 자동으로 생성해 주는 것을 뭐라고 하냐면, "Identity 전략" 이라고 합니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200161825-c874b016-cc65-494d-bbb8-8ffe2e7412ed.png)       
+> 그래서, 이렇게      
+> <pre><code>@Id @GeneratedValue(strategy = GenerationType.IDENTITY)</code></pre>        
+> 라고 해줘야 합니다.     
+>      
+> 이렇게 DB가 알아서 생성해 주는 것은 IDENTITY 라고 합니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200161897-de21984c-32e9-440f-964c-06a0086e4d6a.png)       
+> 지금은 name이 컬럼명도 name이라서 그대로 하면 되지만,      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200161911-587c30d2-dc9a-4f0c-b625-ce5848626420.png)       
+> 만약에 DB의 컬럼명이 username이면, _**@Column(name="username")**_ 이렇게 해주면 매핑됩니다.     
+>      
+> 이렇게 애너테이션을 가지고 데이터베이스와 매핑을 하는 것입니다.     
+> 이렇게 해놓으면, 이제 이 정보들을 가지고 _**sql**_ 쿼리문을 만들 수 있는 것입니다.    
+> _**JPA**_ 가 이러한 방식으로 동작하는 것입니다.      
+>      
+> 이제 _**JPA**_ 로 _**Repository**_ 를 만들어보겠습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200162030-c9c289a8-c20a-49cd-8bb6-9d11afe3add6.png)       
+> ![image](https://user-images.githubusercontent.com/66030601/200162035-942950ce-7fc9-4edc-a7af-f9a6e60c16fb.png)       
+> _**JpaMemberRepository**_ 라는 이름으로 클래스를 만들고,     
+> _**MemberRepository**_ 를 _**implements**_ 했습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200162148-b9636bbe-b62f-4b37-8866-c4d344a37c59.png)       
+> <pre><code>private final EntityManager em;</code></pre>     
+> 를 입력하고 Constructor Method 를 해주었습니다.     
+>   
+> _**JPA**_ 는 _**EntityManager**_ 라는 것으로 모든게 동작합니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200162202-bae12ce0-7fa8-409a-87cc-0909e4b14aa3.png)       
+> 아까전에 _**build.gradle**_ 에서 _**data-jpa**_ 라이브러리를 받았는데, 그렇게 하면, _**properties**_ 정보등을 전부 취합하여 스프링 부트가 자동을 _**EntityManager**_ 를 생성해줍니다.     
+>       
+> 현재 DB랑 연결까지 전부 해서 _**EntityManager**_ 를 생성해줍니다.      
+>      
+> 그래서 우리는 만들어진 _**EntityManager**_ 를 _**Injection**_ 받으면 됩니다.     
+>     
+> 즉, _**JPA**_ 를 사용하려면,     
+> _**EntityManager**_ 라는 것을 인젝션 받아야 한다는 것 입니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200162294-1b221f62-e26e-4818-9489-49cf4e6681b2.png)      
+> _**save**_ 를 구현해보겠습니다.     
+>       
+> _**EntityManager**_ 를 줄여서 _**em**_ 이라고 많이 사용하는데,      
+> <pre><code>em.persist(member);</code></pre>        
+> 를 해줍니다. _**persist**_ 가 영속하다, 영구저장하다라는 뜻입니다.    
+> 안에는 _**member**_ 를 넣고, _**return member**_ 를 해줍니다.    
+>      
+> 이렇게만 하면 _**save()**_ 가 끝납니다.     
+>      
+> _**JPA**_ 가 _**Insert쿼리**_ 를 다 만들어서 DB에 집어넣고,    
+> _**ID**_ 까지 _**member**_ 에다 _**setId**_ 까지 해줍니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200162485-4cebfdaa-07cf-490b-bbb7-251ce3de33ca.png)      
+> 이번에는 _**findById**_ 를 구현해보겠습니다.    
+>      
+> <pre><code>em.find(Member.class, id)</code></pre>      
+> _**em.find**_ 라고 있는데, 매개변수로는 조회할 타입과, 식별자 Primary Key 만 넣어주면 조회가 됩니다.   
+> 그러면 _**SELECT**_ 문이 나가는 것 입니다.     
+> 그런데 _**return**_ 을 해야 하는데,     
+> _**Optional**_ 로 반환을 하기 때문에 값이 없을 수도 있기 때문에      
+> <pre><code>return Optional.ofNullable(member);</code></pre>        
+> 이렇게 작성합니다.       
+>       
+> 이번에는 _**findAll**_ 을 작성해보겠습니다.     
+> 앞서 작성한, _**findId_** 는 ***id*** 가 _**Primary Key**_ 였습니다.     
+>      
+> _**name**_ 은 _**pk**_ 가 아닙니다. 따라서      
+> _**findAll**_ 과 _**findByName**_ 를 작성할 때는 조금 다르게 작성합니다.       
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200162782-f8a7f9aa-264b-4894-ae55-766d7d90352b.png)       
+> 이 두 위치의 값이 같으면, inline(cmd + opt + n) 사용할 수 있습니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200162802-9337c781-d60e-4e13-a7b4-88eabd32e0fa.png)     
+> (맥 기준으로 ctrl + t 로 검색할 수도 있습니다.)     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200162827-7d7c0d17-3f06-4746-9b1e-2169fef1ce03.png)     
+> inline을 사용하면 이렇게 바뀝니다.     
+>   
+> 어쨋든, 위 코드가 _**jpql**_ 이라는 쿼리언어인데,   
+> 우리가 보통 테이블을 대상으로 sql을 날리는데,   
+> _**jpql**_ 은 테이블 대상이 아니라, 객체를 대상으로 _**sql**_ 을 날리는 것입니다.     
+> 정확하게는 _**Entity**_ 를 대상으로 쿼리를 날리는 것 입니다.     
+>       
+> <pre><code>return em.createQuery("select m from Member m", Member.class)
+>          .getResultList();</code></pre>         
+> "***MemberEntity***를 조회해!" 라고 하는데,      
+> _**select**_ 의 대상이 _**m**_ 입니다.     
+>      
+> 원래 _**SQL**_ 이면, * 이라고 하거나, _**mi.id**_, _**m.name**_ 으로 할텐데 말입니다.      
+>      
+> <pre><code>return em.createQuery("select m from Member m", Member.class)
+>           .getResultList();</code></pre>      
+> _**jpql**_ 이 적용된 이 코드에서는    
+> _**m**_ 엔티티 객체 자체를 _**select**_ 하는 것입니다.    
+> 이렇게 해서 조회를 하게 됩니다.    
+>       
+> 이번에는 _**findByName**_ 을 작성해보겠습니다.       
+> ![image](https://user-images.githubusercontent.com/66030601/200163592-c7ac8e18-c15b-4ae0-a339-45a094ac01f1.png)
+> <pre><code>List<Member> result = em.createQuery("select m from Member m where m.name = :name", Member.class)
+>        .setParameter("name", name)
+>        .getResultList();</code></pre>
+> _**findByName**_ 도 _**jpql**_ 이라는 것을 짜야합니다.     
+> 지금은 _**Member.class**_ 로 조회 해야합니다.     
+> 그리고, _**findByName**_ 의 결과를 1개만 찾는다고 했으므로,      
+> _**stream**_ 을 사용해서 반환하면 됩니다.   
+>      
+> 단건을 찍어서 찾는.. 예를 들면, 저장하고, 조회하고 업데이트 하는 것은 _**sql**_ 을 짤 필요가 없는데,     
+>     
+> _**findByName**_ 이나, _**findAll**_ 처럼     
+> 여러개의 리스트를 가지고 돌릴 때는, _**PrimaryKey**_ 기반이 아닌 나머지들은 _**jpql**_ 이라는 것을 작성해줘야합니다.      
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/200163875-8bd5c5ea-05a9-49cb-87aa-316e90efb000.png)     
+> 그리고, _**JPA**_ 를 사용하려면 항상 트랜잭션이 있어야합니다. (JPA로 데이터를 저장하거나 변경하려면...)    
+>     
+> 그래서 _**MemberService**_ 계층에 _**@Transactional**_ 을 작성해줘야 합니다.   
+> _**org.springframework.transaction.annotation.Transactional**_ 를 사용하면 됩니다.     
+> 스프링은 해당 클래스의 메서드를 실행할 때 트랜잭션을 시작하고, 메서드가 정상 종료되면 트랜잭션을 커밋합니다.     
+> 만약 런타임 예외가 발생하면 롤백합니다.     
+> _**JPA**_ 를 통한 모든 데이터 변경은 트랜잭션 안에서 실행해야 합니다.     
+>      
+> 이제 _**JPA**_ 를 사용하도록 스프링 설정을 변경하겠습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200164003-d0939a95-c7ac-4c84-90e1-4634abecfa68.png)      
+> 원래 스펙에서는    
+> ![image](https://user-images.githubusercontent.com/66030601/200164019-f39a4729-c20d-4248-8182-3616903b96c5.png)      
+> _**@PersistenceContext**_ 를 이렇게 받아야 하는데,    
+> <pre><code>private EntityManager em;
 >
+> @Autowired
+> public SpringConfig(EntityManager em) {
+> this.em = em;
+> }</code></pre>     
+> 스프링에서는 이렇게 작성해도 _**DI**_ 를 해줍니다.      
+>       
+> 자! 이제 돌려보겠습니다.     
+> ![image](https://user-images.githubusercontent.com/66030601/200164111-fc7aa5ad-0b4a-4774-9cbc-2e5cc7cf4c90.png)       
+> 전에 만들어둔 스프링 통합테스트를 돌려보겠습니다.      
+>       
+> 테스트에 통과했습니다.       
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/200164133-63b2a621-0d9d-4681-ad91-8d1cb3236a86.png)      
+> 로그를 보면, _**JPA**_ 는 인터페이스고, 쿼리가 _**Hibernate**_ 구현체가 사용된 것을 볼 수 있습니다.     
+> 결국 DB에는 _**SQL**_ 이 나가야 하는 것입니다.      
+>     
+> ※ 참고      
+> _**JPA**_ 기술을 스프링에 담아서 감싸서 제공하는 기술이 있습니다.     
+> 그것이 바로 _**SpringDataJPA**_ 기술입니다.     
+>     
+> _**SpringDataJPA**_ 를 사용하면, _**findByName**_ 이나 _**findAll**_ 같이 _**PrimaryKey**_ 기반이 아닌 것들도 _**jpql**_ 쿼리를 작성하지 않아도 됩니다.     
 >
 > ***         
 >        
