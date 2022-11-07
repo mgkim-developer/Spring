@@ -2603,10 +2603,185 @@
 > ***         
 >        
 > ## [✅ 스프링 데이터 JPA](https://github.com/mgyokim/Spring/commit/67f3f5e419a78bc31dd7680bc6d0da7fc49354de)
->
+> _**SpringBoot**_ 와 _**JPA**_ 만 사용해도 개발 생산성이 정말 많이 증가합니다.   
+> 개발 해야할 코드도 엄청나게 줄어듭니다.     
+>     
+> 그런데, 여기에다가 _**SpringDataJPA**_ 를 사용하면,     
+> "이것까진 안되지 않을까?" 라는 이러한 한계를 넘어서,     
+> 정말 마법처럼, 인터페이스만으로 개발을 완료할 수 있습니다. (물론 디테일하게 들어가면 조금 다릅니다..)   
+>     
+> 그리고, 반복적으로 개발해온 기본 CRUD 기능도 _**스프링 데이터 JPA**_ 가 모두 제공해줍니다.     
+>      
+> ***스프링 부트***와 _**JPA**_ 라는 기반 위에, _**스프링 데이터 JPA**_ 라는 환상적인 프레임워크를 더하면,   
+> 지금까지 조금이라도 단순하고 반복이라 생각했던 개발 코드들이 확연하게 줄어듭니다.     
+>     
+> 따라서, 엔지니어/개발자는 핵심 비즈니스 로직을 개발하는데 집중할 수 있습니다.     
+>      
+> 실무에서 관계형 데이터베이스를 사용한다면, _**스프링 데이터 JPA**_ 는 이제는 선택이 아니라 필수입니다.     
+>     
+> ※ 주의 : _**스프링 데이터 JPA**_ 는 _**JPA**_ 를 편리하게 사용하도록 도와주는 기술입니다. 따라서 _**JPA**_ 를 먼저 학습하고, _**스프링 데이터 JPA**_ 를 학습해야합니다.   
+>      
+> ### 스프링 데이터 JPA   
+> 설정은 _**JPA**_ 설정을 그대로 사용합니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200261523-4083b764-c449-446c-806f-6761dd871c09.png)      
+> ![image](https://user-images.githubusercontent.com/66030601/200261574-ae864858-5a29-42d4-a0d1-e04393924d5f.png)       
+> _**repository**_ 폴더에 _**SpringDataJpaMemberRepository**_ 라는 이름으로 인터페이스를 생성했습니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200261759-c308900b-7070-4eea-aaf3-fae2d1715e83.png)      
+> 그리고, _**SpringDataJpaMemberRepository**_ 인터페이스에서 _**JpaRepository**_ 라는 인터페이스를 상속하도록 했습니다.     
+> 참고로, 인터페이스가 인터페이스를 상속 받을 때는 _**implements**_ 가 아니라 _**extends**_ 입니다.     
+>     
+> 그리고, 지네릭타입으로 첫번째는 _**Member**_, 두번째 엔티티에서 식별자 _**PrimaryKey**_ 인 _**Id**_ 의 타입인 _**Long**_ 입니다.     
+>      
+> 그리고, 인터페이스는 다중상속이 가능합니다.      
+> 그래서 _**MemberRepository**_ 인터페이스도 상속시켜주었습니다.      
+>     
+> 그리고,      
+> <pre><code>@Override
+> Optional<Member> findByName(String name);</code></pre>         
+>      
+> 이렇게 적어주었습니다.       
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200263542-ac5f4c2b-551f-4d18-b608-4f75de08fcc4.png)      
+> 이렇게만 해주면 구현을 다 한것입니다.      
+>        
+> !!!!????     
+>     
+> 이게 어떻게 가능한지 알아보도록 하겠습니다.      
+>       
+> 우선,      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200263713-7e2764d2-a8d9-4cad-b450-37a89d37efb0.png)       
+> _**SpringDataJpaMemberRepository**_ 를 보면, 인터페이스만 있습니다.     
+>      
+> 이렇게, _**SpringDataJpaMemberRepository**_ 가 _**JpaRepository**_ 를 상속받고 있으면,      
+> _**SpringDataJpa**_ 가 구현체를 자동으로 만들어줍니다.     
+>      
+> 내가 스프링빈에 등록하는게 아니라,     
+> _**스프링 데이터 jpa**_ 가 자동으로 구현체를 만들어서 스프링빈에 등록을 해줍니다.     
+>      
+> 우리는 그것을 그냥 가져다가 쓰면 됩니다.   
+>    
+> 어떻게 가져다 쓰냐면,    
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200265012-bc615163-c847-4798-b60a-6469fa8564e4.png)       
+> 이렇게 _**memberRepository**_ 를 그냥 인젝션 받으면 됩니다.      
+> (이렇게 생성자가 하나인 경우에는 _**@Autowired**_ 생략하는 것도 가능합니다.)      
+>      
+> 그러면, _**스프링 데이터 Jpa**_ 가 구현체로 만들어 놓은 것이 등록됩니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200265355-de8622a6-10c4-422b-a4ad-b3ef6bc2054e.png)       
+> 그리고 _**memberService**_ 에다가 의존관계 세팅을 해주겠습니다.     
+> 방금 인젝션 받은 _**memberRepository**_ 를 _**MemberService**_ 에 의존관계 세팅을 해주었습니다.      
+>      
+> 이런 경우에는 스프링 컨테이너에서 _**MemberRepository**_ 를 찾습니다.     
+> 그런데, _**MemberRepository**_ 는 지금 내가 등록한게 없습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200265591-9e2b070d-e1ac-40c3-bf29-fa99e6fd1da5.png)      
+> 등록되어있는 것은 1개가 있는데,      
+> _**SpringDataJpaMemberRepository**_ 가 스프링 컨테이너에 등록되어 있습니다.     
+>      
+> _**SpringDataJpa**_ 가 제공하는 _**JpaRepository**_ 를 상속받은 인터페이스만 만들어 놓으면,   
+> _**SpringDataJpa**_ 가 해당 인터페이스에 대한 구현체를 자동으로 생성해서 스프링 빈에 자동으로 등록해줍니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200266309-07068f3e-e06e-49d7-987d-57db60e348ff.png)        
+> 그래서 우리는, 이러한 방식으로 인젝션을 받을 수 있는 것입니다.     
+>      
+> 이제 한번 돌려보겠습니다.     
+>      
+> 먼저 스프링통합테스트로 회원가입만 살짝 돌려보겠습니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200266604-c288d817-d474-478a-a166-d8a6640a71b7.png)      
+> 로그를 살펴보면, _**Hibernate**_ 구현체가 사용된 것을 볼 수 있습니다.     
+> 즉, _**SpringDataJpa**_ 가 _**JPA**_ 기술을 가져다 쓰는 것을 알 수 있습니다.      
+>       
+> 이번에는 스프링 통합테스트로 전체 테스트를 돌려보겠습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200267134-2e60d9c9-f855-49a6-9cd9-43a107c31565.png)       
+> 테스트에 잘 통과한 것을 볼 수 있습니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200267349-043e3134-351f-4475-ba86-eacf0a17952f.png)       
+> _**스프링 데이터 Jpa**_ 가 _**SpringDataJpaMemberRepository**_ 인터페이스를 보고,     
+> 프록시라는 기술을 가지고 객체를 생성을 해서 스프링빈에 자동으로 등록해줍니다.     
+>       
+> 그러면, 우리는 그것을 인젝션해서 사용한 것입니다.   
+>       
+> 자, 그러면, 기본적인 _**save()**_, _**findOne()**_ 같은 메서드는 다 어디에 있는 것일까요?      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200268145-7a617d1e-52cf-4260-a4ff-5891d95fccd5.png)       
+> 사실, 여기에 다 있습니다.     
+>      
+> _**스프링 데이터 JPA**_ 가 기본적으로 _**JpaRepository**_ 에서 _**findAll()**_, _**save()**_ 등을 제공합니다.     
+>      
+> 그리고, _**CrudRepository**_ 에서 기본적인 _**save()**_ 등을 제공합니다.     
+>     
+> 이렇게 우리가 머릿속으로 상상할 수 있는 것들은 공통화해서 거의다 제공을 해줍니다.       
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200268945-38689fb8-93aa-480a-9a00-81e00e6387e6.png)        
+> _**JpaRepository**_ 에 들어가보면,      
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/200269007-78a1e557-820e-4d1e-9b88-5c873f2f7420.png)       
+> 이런식으로 기본메서드들이 다 제공이 됩니다.       
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200269153-7cb85e4a-c501-4836-b783-a300561e232f.png)       
+> _**PagingAndSortingRepository**_ 까지 들어가보면,     
+> 페이징처리, 조회까지 해줍니다.      
+>       
+> 그리고 _**CrudRepository**_ 까지 들어가보면,      
+>     
+> ![image](https://user-images.githubusercontent.com/66030601/200269410-11976bc5-e558-4d99-bc38-31e1496a9c2d.png)       
+> 우리가 만들었던 _**save**_, _**findById**_ 등이 기본적으로 제공됩니다.      
+>      
+> 이러한 기본적인 CRUD와 단순조회들이 다 제공됩니다.      
+>      
+> 그래서, 우리가 생각할 수 있는 기본적인 것들은 공통화해서 거의 다 만들어져 있습니다.     
+> 그래서 그것을 그냥 가져다가 쓰면 되는 것입니다.      
+>      
+> 그런데, 아무리 공통화를 해도, 못만드는게 있습니다.      
+>     
+> 예를 들어서     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200269845-9834eb11-023d-4bae-a5bf-83eca322e591.png)      
+> _**@Entity**_ _**Member**_ 를 보겠습니다.      
+>      
+> 내가 _**name**_ 으로 찾고 싶은지, _**이메일 이름**_ 으로 찾고싶은지,    
+>    
+> 이러한 것들은 비즈니스가 다 다르기 때문에 공통화 하는게 불가능합니다.     
+> 그래서 공통 클래스로 제공할 수가 없습니다.     
+>     
+> 내가 만든 프로젝트인 경우에야, _**Member**_ 가 _**name**_ 으로 찾을 수 있지만,     
+> 다른 회사에서는 _**username**_ 이라고 할 수도 있고, 다른 객체들이 굉장히 많이 있으니깐 말입니다.     
+>       
+> 그리고, 주문할 때도, 주문서 번호로 조회할 지, 고객이 주문한 상품이름으로 조회할지,   
+> 이런것들은 인터페이스를 통한 메서드로 공통화 할 수 있는 것이 아닙니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200270390-f9606ee8-a42a-4c50-ad12-34c542b111b1.png)       
+> 그래서 _**SpringDataJpaMemberRepository**_ 에다가    
+> _**findByName**_ 을 만들어주면, 어떤 일이 벌어지냐면,     
+>       
+> 이게 규칙이 있는데, _**findByName**_ 에서는 _**name**_ 으로 찾습니다.     
+>      
+> <pre><code>JPQL select m from Member m where m.name = ?</code></pre>            
+> 자동으로 이런식으로 _**JPQL**_ 이 짜지고, 이게 _**SQL**_ 로 번역이 되서 실행됩니다.   
+> 이것 외에도 _**findByNameAndId(String name, Long id);**_ 이런식으로 _**And**_, _**Or**_ 등등 여러가지가 있습니다.      
+>       
+> 어쨋든, 단순한 것들은 이렇게 인터페이스 이름만으로도 개발이 끝납니다.     
+>       
+> ### 스프링 데이터 JPA 제공 기능     
+> - 인터페이스를 통한 기본적인 CRUD       
+> - _**findByName()**_, _**findByEmail()**_ 처럼 메서드 이름 만으로 조회 기능 제공     
+> - 페이징 기능 자동 제공      
+>       
+> ※ 참고       
+> 실무에서는 _**JPA**_ 와 _**스프링 데이터 JPA**_ 를 기본으로 사용하고, 복잡한 동적 쿼리는 _**Querydsl**_ 이라는 라이브러리를 사용하면 됩니다.     
+> _**Querydsl**_ 을 사용하면 쿼리도 자바 코드로 안전하게 작성할 수 있고, 동적 쿼리도 편리하게 작성할 수 있습니다.      
+> 이 조합으로 해결하기 어려운 쿼리는 _**JPA**_ 가 제공하는 네이티브 쿼리를 사용하거나 앞서 학습한 스프링 _**JdbcTemplate**_ 를 사용하면 됩니다.      
+>        
+
 >
 > ***        
-                  
+>                        
 # AOP
 > ## ✅ AOP가 필요한 상황
 >
