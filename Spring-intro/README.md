@@ -49,7 +49,7 @@
 - AOP 적용     
      
 [Spring_Intro를 마치며..](#마무리)
-- Spring_Intro 를 마무리하며..
+- 마무리
 
 ***
 
