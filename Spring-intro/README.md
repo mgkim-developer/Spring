@@ -2834,7 +2834,117 @@
 > ***         
 >       
 > ## [✅ AOP 적용](https://github.com/mgyokim/Spring/commit/4b332ef4b3d61ec2556878be1f9ff903af0ac652)
->
+> _**AOP**_ 적용     
+> - _**AOP**_ : Aspect Oriented Programming        
+> - 공통 관심 사항(cross-cutting concern) vs 핵심 관심 사항(core concern) 분리            
+>                      
+> ![image](https://user-images.githubusercontent.com/66030601/200494145-4b8eab4d-9692-4f4a-a4f0-e73861873fe0.png)               
+> 좌측처럼 분산되어 있는 공통 관심 사항인 시간 측정 로직을    
+> 우측 처럼 한곳에 모으고, 내가 원하는 곳에 공통 관심 사항을 적용한다는 개념이 AOP 입니다.      
+>     
+> _**AOP**_ 적용 방법을 알아보겠습니다.     
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200495253-291bd637-886d-4b15-8a45-8f989949c40b.png)       
+> 우선, _**hellospring**_ 패키지의 하위에 _**aop**_ 라는 이름으로 패키지를 생성했습니다.     
+> 그리고 _**aop**_ 패키지 안에, _**TimeTraceAop**_ 라는 이름으로 클래스를 생성했습니다.           
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200495534-041020dd-44ab-4119-9d95-9dd0cf092c3f.png)      
+> 그리고, _**Aop**_ 는 _**@Aspect**_ 라는 애너테이션을 적어줘야 합니다.      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200499357-4dad780f-7ce5-4a89-99ae-5b996e6b3d5c.png)        
+> 코드는 이렇게 작성해주었습니다.      
+>       
+> 그리고 작성한 _**Aop**_ 클래스인 _**TimeTraceAop**_ 를 스프링빈으로 등록해줘야 합니다.     
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200499831-96ffc9d8-57cd-4e28-998d-f6dfec5ec2f2.png)       
+> 컴포넌트 스캔 방식을 이용하려면,     
+> 이렇게 _**@Component**_ 애너테이션을 작성해줘도 되고,      
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200500019-36b44d8f-5b80-420f-ba9f-cd59f02ae398.png)       
+> 아니면, 스프링빈에 등록해줘도 됩니다.     
+>        
+> "이것을 _**AOP**_ 로 걸어서 사용하는구나!" 라고 인지하기 쉽도록,   
+> _**AOP**_ 같은 경우에는, 스프링 빈에 등록하는 방식을 선호합니다.       
+>       
+> ![image](https://user-images.githubusercontent.com/66030601/200500336-2a3889ac-55f2-4b28-b20a-4da2ad5315ff.png)        
+> 하지만, 예제에서는 컴포넌트 스캔방식을 사용하도록 하겠습니다.      
+>       
+> 그리고 추가적으로 _**@Around**_ 애너테이션을 _**TimeTraceAop**_ 클래스 내부에 적어줘야 하는데,      
+>      
+> <pre><code>@Around("execution(* hello.hellospring..*(..))")</code></pre>            
+> _**실행하는 패키지명..그 밑에 있는 클래스..*(파라미터타입..등등))**_    
+> 해서 원하는 조건을 넣을 수 있습니다.     
+>       
+> 이 코드는 "_**hello.hellospring**_ 패키지 하위에는 다 적용해!" 라는 뜻입니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200500974-ffa8bf15-82f5-4af9-9956-d8928416a577.png)        
+> 이제, 이전시간에 _**MemberService**_ 클래스에 작성 해두었던 실행시간 출력 관련 코드들을 지워주겠습니다.      
+> 방금 _**AOP**_ 를 작성했기 때문에 지워도 됩니다.      
+>      
+> ![image](https://user-images.githubusercontent.com/66030601/200501212-abf036ff-11c4-423a-9576-a75fb43eb68e.png)        
+> 그리고 이제 서버를 돌려서 확인해보겠습니다.     
+> 서버를 돌리고 회원 목록을 조회하고 로그를 확인해보겠습니다.      
+>       
+> START를 해서 _**MemberController**_, _**MemberService**_, _**JpaRepository**_ 각각의 실행시간이 잘 찍혔습니다.      
+>      
+> 이러면, 어디서 병목이 있는지, 어디서 밀리는지 바로 찾을 수 있을 것입니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200502246-0d393e6a-b647-4419-87d6-026154cf3a41.png)        
+> _**@Around**_, _**joinPoint**_ 등으로 원하는 것들을 조작해서 사용할 수 있습니다.     
+>      
+> 이런식으로 제공되는 기술이 _**AOP**_ 입니다.     
+>       
+> ### 해결      
+> - 회원 가입, 회원 조회 등 핵심 관심사항과 시간을 측정하는 공통 관심 사항을 분리합니다.      
+> - 시간을 측정하는 로직을 별도의 공통 로직으로 만들었습니다.      
+> - 핵심 관심 사항을 깔끔하게 유지할 수 있습니다.      
+> - 변경이 필요하면 이 로직만 변경하면 됩니다.      
+> - 원하는 적용 대상을 선택할 수 있습니다.     
+>        
+> ### 스프링 AOP 동작 방식      
+> ![image](https://user-images.githubusercontent.com/66030601/200503676-58a961a3-4f3b-40ed-be9d-a55ec7ce734f.png)      
+> _**AOP**_ 를 적용하기 전에는,        
+> 컨트롤러에서 서비스를 호출할 때, 그냥 의존관계를 통해 호출했습니다.       
+>       
+> 그런데, _**AOP**_ 를 적용을 하고, 어디에 적용할 건지 지정을 하면,      
+> 지정된 서비스에 대해 가짜 서비스를 만듭니다.       
+>        
+> 예를 들어, _**AOP**_ 를 적용하면서, _**memberService**_ 에 적용할 것이라고 지정을 했으면,      
+> 가짜 _**memberService**_ 를 만듭니다. 그것을 프록시라고 합니다.      
+>       
+> 그러면서 스프링 컨테이너는 어떻게 동작하냐면,      
+> 스프링이 올라와서 스프링컨테이너에 스프링빈을 등록할 때,      
+> 진짜 스프링빈 말고, 가짜 스프링빈을 앞에 세워 놓습니다.      
+> 이 가짜 스프링빈이 끝나면(_**joinPoint.proceed()**_ 하면), 그때 진짜 스프링빈을 호출해줍니다.      
+>       
+> 그래서, 컨트롤러가 호출하는 것은 진짜 멤버서비스가 아니라, 프록시라는 기술로 발생하는 가짜멤버서비스입니다.    
+>      
+> 실제로 Proxy가 주입되는지 콘솔에 출력해서 확인해 볼 수 있습니다.       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200504406-dbef2929-7e42-409d-b6b9-fc4de1a8a8a7.png)        
+> _**MemberController**_ 를 보면, _**memberService**_ 가 인젝션되는데,       
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200504878-e69e07bf-f63c-41c2-93ca-92b35290f053.png)       
+> <pre><code>System.out.println("memberService = " + memberService.getClass());</code></pre>            
+> 이때 _**getClass()**_ 를 살짝 찍어보면 됩니다.       
+>      
+> 서버를 돌려서 로그를 확인해보면,      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200505670-d43ceea6-7ec1-4e69-bbeb-f2c814f1dc4e.png)       
+> _**MemberService**_ 로 끝나는게 아니라 _**$$EnhancerBySpringCGLIB$$accf7887**_ 라는 것을 볼 수 있습니다.     
+> _**EnhancerBySpringCGLIB**_ 를 볼 수 있는데,      
+> _**CGLIB**_ 라는 것은, _**MemberService**_ 를 가지고 복제를 해서 코드를 조작하는 기술입니다. 이러한 기술이 적용된 것입니다.      
+>        
+> ![image](https://user-images.githubusercontent.com/66030601/200508706-4af0d03a-0587-4abc-a400-d9e2aa98329e.png)      
+> 그래서 _**AOP**_ 가 적용이 되면, 스프링 컨테이너가 "어? 너 _**MemberService**_ 에 _**AOP**_ 가 적용이 되야하네?"라고 하며    
+> 프록시를 생성해서 앞에 세우는 것입니다.      
+>      
+> 그러고나서, 프록시를 통해 _**AOP**_ 가 다 실행이 되고, _**jointPoint.proceed()**_ 하면, 그때, 이제 진짜 _**MemberService**_ 가 호출이 되는 방식입니다.    
+>       
+> 좌측 그림은 _**AOP**_ 적용 전이고,    
+> 우측 그림은 _**AOP**_ 의 타깃을 _**MemberController**_, _**MemberService**_, _**MemberRepository**_ 로 다 설정했을 때의 그림입니다.
+      
+
 
 
 
