@@ -32,7 +32,7 @@
 - [주문과 할인 도메인 개발](https://mgyo.tistory.com/430)
 - [주문과 할인 도메인 실행과 테스트](https://mgyo.tistory.com/431)
 
-[스프링 핵심 원리 이해2 객체 지향 원리 적용]
+### 스프링 핵심 원리 이해2 객체 지향 원리 적용
 - [새로운 할인 정책 개발](https://mgyo.tistory.com/432)
 - [새로운 할인 정책 적용과 문제점](https://mgyo.tistory.com/433)
 - [관심사의 분리](https://mgyo.tistory.com/434)
