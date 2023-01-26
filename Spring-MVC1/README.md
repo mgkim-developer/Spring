@@ -167,9 +167,60 @@
 >> #### 직접 만든 MVC 프레임워크 구조 vs SpringMVC 구조     
 >> ![img_8.png](img_8.png)   
 >> 직접 만든 프레임워크 → 스프링 MVC 비교   
-- FrontController → Dis
->>  
-> 
+>> - FrontController → DispatcherServlet
+>> - handlerMappingMap → HandlerMapping
+>> - MyHandlerAdapter → HandlerAdapter
+>> - ModelView → ModelAndView
+>> - viewResolver → ViewResolver
+>> - MyView → View
+>>     
+>> #### DispatcherServlet 구조 살펴보기
+>> <code>org.springframework.web.servlet.DispatcherServlet</code>    
+>> 스프링 MVC도 프론트 컨트롤러 패턴으로 구현되어 있습니다.   
+>> 스프링 MVC의 프론트 컨트롤러가 바로 디스패처 서블릿(DispatcherServlet)입니다.   
+>> 그리고 이 디스패처 서블릿이 바로 스프링 MVC의 핵심입니다.   
+>>   
+>> #### DispatcherSevlet 서블릿 등록   
+>> - DispatcherServlet 도 부모 클래스에서 HttpServlet을 상속 받아서 사용하고, 서블릿으로 동작합니다.
+>>  - DispatcherServlet → FrameworkServlet → HttpServletBean → HttpServlet
+>> - 스프링 부트는 DispatcherServlet을 서블릿으로 자동 등록하면서 모든 경로(urlPatterns="/")에 대해서 매핑합니다.
+>>  - 참고 : 더 자세한 경로가 우선순위가 높습니다. 그래서 기존에 등록한 서블릿도 함께 동작합니다.
+>>     
+>> #### 요청 흐름
+>> - 서블릿이 호출되면 HttpServlet이 제공하는 service()가 호출됩니다.   
+>> - 스프링 MVC는 DispatcherServlet의 부모인 FrameworkServlet에서 service()를 오버라이드 해두었습니다.
+>> - FrameworkServlet.service()를 시작으로 여러 메서드가 호출되면서 DispatcherServlet.doDispatch()가 호출됩니다.
+>     
+>> 이번에는 DispatcherServlet의 핵심인 doDispatch() 코드를 분석 해보겠습니다.     
+>> 최대한 간단하게 정리하기 위해 예외처리, 인터셉터 기능은 제외했습니다.   
+>> #### DispatcherServlet.doDispatch()    
+>> ![img_9.png](img_9.png)    
+>> ![img_10.png](img_10.png)     
+>        
+>> #### SpringMVC 구조   
+>> ![img_11.png](img_11.png)       
+>> 동작 순서   
+>> 1. 핸들러 조회 : 핸들러 매핑을 통해 요청 URL에 매핑된 핸들러(컨트롤러)를 조회한다.
+>> 2. 핸들러 어댑터 조회 : 핸들러를 실행할 수 있는 핸들러 어댑터를 조회한다.
+>> 3. 핸들러 어댑터 실행 : 핸들러 어댑터를 실행한다.   
+>> 4. 핸들러 실행 : 핸들러 어댑터가 실제 핸들러를 실행한다.
+>> 5. ModelAndView 반환 : 핸들러 어댑터는 핸들러가 반환하는 정보를 ModelAndView로 변환해서 반환한다.
+>> 6. viewResolver 호출 : 뷰 리졸버를 찾고 실행한다.
+>>   1. JSP의 경우 : InternalResourceViewResolver가 자동 등록되고, 사용된다.
+>> 7. View 반환 : 뷰 리졸버는 뷰의 논리 이름을 물리 이름으로 바꾸고, 랜더링 역할을 담당하는 뷰 객체를 반환한다.
+>>   1. JSP의 경우 InternalResourceView(JslView)를 반환하는데, 내부에 forward() 로직이 있다.
+>> 8. 뷰 랜더링 : 뷰를 통해서 뷰를 랜더링 한다.
+>>        
+>> 스프링 MVC의 큰 강점은 DispatcherServlet 코드의 변경 없이, 원한느 기능을 변경하거나 확장할 수 있다는 점입니다.    
+>> 지금까지 알아본 대부분의 것들을 확장 가능할 수 있도록 인터페이스로 제공합니다.   
+>> 이 인터페이스들만 구현해서 DispatcherServlet에 등록하면 우리들만의 컨트롤러를 만들 수도 있습니다.   
+>>     
+>>  #### 주요 인터페이스 목록
+>> 핸들러 매핑: <code>org.springframework.web.servlet.HandlerMapping</code>     
+>> 핸들러 어댑터: <code>org.springframework.web.servlet.HandlerAdapter</code>      
+>> 뷰 리졸버: <code>org.springframework.web.servlet.ViewResolver</code>        
+>> 뷰: <code>org.springframework.web.servlet.View</code>        
+>
 > ----
 > 스프링을 이용해서 웹 어플리케이션을 개발하려면, 스프링 MVC의 핵심 구조를 제대로 파악해야 합니다.   
 > 
@@ -178,5 +229,7 @@
 > 그래서, 스프링 없이 직접 스프링 MVC의 핵심 기능을 만들어 보았습니다.    
 > 단순히 머리로 MVC 프레임워크를 이해하는 것이 아니라, 완전히 처음부터 MVC 프레임워크를 새로 개발했습니다.      
 > 
-> 그리고 단계적으로 MVC 프레임워크를 발전시켜 나가는 과정을 통해    
-> 자연스럽게 스프링 MVC의 내부 구조가 왜 이렇게 설계되었는지 깊이있게 이해할 수 있었습니다.
+> 그리고 단계적으로 MVC 프레임워크를 발전시켜 나가는 과정을 통해 자연스럽게 스프링 MVC의 내부 구조가 왜 이렇게 설계되었는지 깊이있게 이해할 수 있었습니다.       
+> 스프링 MVC는 전 세계 수 많은 개발자들의 요구사항에 맞추어 기능을 계속 확장해왔습니다. 그래서, 대부분의 기능이 이미 다 구현되어 있습니다.    
+> 그래도, 이렇게 핵심 동작 방식을 알아두어야, 향후 문제가 발생했을 때 어떤 부분에서 문제가 발생했는지 쉽게 파악하고, 문제를 해결할 수 있습니다.  
+> 그리고 확장 포인트가 필요할 때, 어떤 부분을 확장해야 할지 감을 잡을 수 있습니다.  
