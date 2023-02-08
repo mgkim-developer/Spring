@@ -221,6 +221,32 @@
 >> 뷰 리졸버: <code>org.springframework.web.servlet.ViewResolver</code>        
 >> 뷰: <code>org.springframework.web.servlet.View</code>        
 >
+>> #### 실무에서 주로 사용하는 방식
+>> ![img_12.png](img_12.png)
+>> ![img_13.png](img_13.png)
+>> #### Model 파라미터
+>> save(), members()를 보면, Model을 파라미터로 받는 것을 확인할 수 있습니다.    
+>> 스프링 MVC 도 이런 편의 기능을 제공합니다.   
+>>        
+>> #### ViewName 직접 반환
+>> 뷰의 논리 이름을 반환할 수 있습니다.    
+>>          
+>> #### @RequestParam 사용    
+>> 스프링은 HTTP 요청 파라미터를 <code>@RequestParam</code>으로 받을 수 있습니다.     
+>> <code>@RequestParam("usename")</code>은 <code>request.getParameter("username")</code>와 거의 같은 코드라고 생각하면 됩니다.   
+>> 물론 GET 쿼리 파라미터, POST Form 방식을 모두 지원합니다.      
+>>               
+>> #### @RequestMapping → @GetMapping, @PostMapping    
+>> <code>@RequestMapping</code>은 URL만 매칭하는 것이 아니라, HTTP Method도 함께 구분할 수 있습니다.    
+>> 예를 들어서 URL이 /new-form이고, HTTP Method가 GET인 경우를 모두 만족하는 매핑을 하려면 다음과 같이 처리하면 됩니다.    
+> <code>@RequestMapping(value = '/new-form", method = RequestMethod.GET) </code>         
+>> 이것을 <code>@GetMapping</code>, <code>@PostMapping</code> 으로 더 편리하게 사용할 수 있습니다.             
+> <code>@RequestMapping</code> 를 통해 클래스레벨, 메서드 레벨을 조합 할 수 있습니다.
+>> 참고로 Get, Post, Delete, Patch 모두 애노테이션으로 준비되어 있습니다.                
+>>         
+>> ![img_14.png](img_14.png)           
+> <Code>@GetMapping</code> 코드를 열어서 <code>@RequestMapping</code> 애노테이션을 내부에 가지고 있는 모습을 확인해 볼 수 있습니다.
+> 
 > ----
 > 스프링을 이용해서 웹 어플리케이션을 개발하려면, 스프링 MVC의 핵심 구조를 제대로 파악해야 합니다.   
 > 
