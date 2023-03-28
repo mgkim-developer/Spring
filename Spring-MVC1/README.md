@@ -219,94 +219,62 @@
 >> 핸들러 매핑: <code>org.springframework.web.servlet.HandlerMapping</code>     
 >> 핸들러 어댑터: <code>org.springframework.web.servlet.HandlerAdapter</code>      
 >> 뷰 리졸버: <code>org.springframework.web.servlet.ViewResolver</code>        
->> 뷰: <code>org.springframework.web.servlet.View</code>        
->
->> #### 실무에서 주로 사용하는 방식
->> ![img_12.png](img_12.png)
->> ![img_13.png](img_13.png)
->> #### Model 파라미터
->> save(), members()를 보면, Model을 파라미터로 받는 것을 확인할 수 있습니다.    
->> 스프링 MVC 도 이런 편의 기능을 제공합니다.   
->>        
->> #### ViewName 직접 반환
->> 뷰의 논리 이름을 반환할 수 있습니다.    
->>          
->> #### @RequestParam 사용    
->> 스프링은 HTTP 요청 파라미터를 <code>@RequestParam</code>으로 받을 수 있습니다.     
->> <code>@RequestParam("usename")</code>은 <code>request.getParameter("username")</code>와 거의 같은 코드라고 생각하면 됩니다.   
->> 물론 GET 쿼리 파라미터, POST Form 방식을 모두 지원합니다.      
->>               
->> #### @RequestMapping → @GetMapping, @PostMapping    
->> <code>@RequestMapping</code>은 URL만 매칭하는 것이 아니라, HTTP Method도 함께 구분할 수 있습니다.    
->> 예를 들어서 URL이 /new-form이고, HTTP Method가 GET인 경우를 모두 만족하는 매핑을 하려면 다음과 같이 처리하면 됩니다.    
-> <code>@RequestMapping(value = '/new-form", method = RequestMethod.GET) </code>         
->> 이것을 <code>@GetMapping</code>, <code>@PostMapping</code> 으로 더 편리하게 사용할 수 있습니다.             
-> <code>@RequestMapping</code> 를 통해 클래스레벨, 메서드 레벨을 조합 할 수 있습니다.
->> 참고로 Get, Post, Delete, Patch 모두 애노테이션으로 준비되어 있습니다.                
->>         
->> ![img_14.png](img_14.png)           
-> <Code>@GetMapping</code> 코드를 열어서 <code>@RequestMapping</code> 애노테이션을 내부에 가지고 있는 모습을 확인해 볼 수 있습니다.
->
->> #### 로깅 라이브러리    
->> 스프링 부트 라이브러리르 사용하면 스프링 부트 로깅 라이브러리 (spring-boot-starter-logging)가 함께 포함됩니다.    
->> - [SLF4J](https://www.slf4j.org/)
->> - [Logback](https://logback.qos.ch/)           
->>        
->> 로그 라이브러리는 Logback, Log4J, Log4J2 등등 수많은 라이브러리가 있습니다.         
->> 이것들을 통합해서 인터페이스로 제공하는 것이 바로 SLF4J 라이브러리입니다.      
->> 즉, SLF4J는 인터페이스이고, 그 구현체로 Logback 같은 로그 라이브러리를 선택하면 됩니다.       
->> 실무에서는 스프링 부트가 기본으로 제공하는 Logback을 대부분 사용합니다.         
->>          
->> #### 로그 선언     
->> <code>private Logger = LoggerFactory.getLogger(getClass());</code>        
->> <code>private static final Logger log = LoggerFactory.gerLogger(Xxx.class) </code>         
->> <code>@Slf4j</code> : 롬복 사용 가능      
->>         
->> #### 로그 호출       
->> - <code>log.info("hello")</code>                
->>       
->
->> #### LogTestController         
->> ![img_15.png](img_15.png)        
->> 실행 - http://localhost:8080/log-test       
->> ![img_17.png](img_17.png)        
->> ![img_18.png](img_18.png)
->>     
->> #### 매핑 정보      
->> - <code>@RestController</code>
->>   - <code>@Controller는 반환 값이 String이면 뷰 이름으로 인식됩니다. 그래서 뷰를 찾고 뷰가 랜더링 됩니다.</code>
->>   - <code>@RestController</code>는 반환 값으로 뷰를 찾는 것이 아니라, HTTP 메시지 바디에 바로 입력합니다. 따라서 실행 결과로 ok 메시지를 받을 수 있습니다. <code>@ResponseBody</code>와 관련이 있는데, 추후 더 자세히 알아보겠습니다.
->       
->> #### 테스트      
->> 로그 테스트를 진행해 보겠습니다.
->> - 로그가 출력되는 포맷 확인
->>   - 시간, 로그 레벨, 프로세스 ID, 쓰레드 명, 클래스명, 로그 메시지 
->> - 로그 레벨 설정을 변경해서 춢력 결과 확인
->>   - LEVEL : TRACE > DEBUG > INFO > WARN > ERROR
->>   - 개발 서버는 debug 출력
->>   - 운영 서버는 info 출력
->> - <code>@Slf4j</code>로 변경         
->>        
->> #### 로그 레벨 설정        
->> <code>application.properties</code>        
->> ![img_16.png](img_16.png)          
->>          
->> #### 올바른 로그 사용법      
->> - <code>log.debug("data-"+data)</code>   (잘못된 예시)   
->>   - 로그 출력 레벨을 info로 설정해도 해당 코드에 있는 "data="+data가 실제 실행이 되어 버립니다.' 결과적으로 문자 더하기 연산이 발생합니다.       
->> - <code>log.debug("data={}", data)</code> (올바른 예시)       
->>   - 로그 출력 레벨을 info로 설정하면 아무 일도 발생하지 않습니다. 따라서 앞과 같은 의미없는 연산이 발생하지 않습니다.
->      
->> #### 로그 사용시 장점      
->> 시스템 콘솔로 직접 출력하는 것 보다 로그를 사용하면 다음과 같은 장점이 있습니다.             
->> - 쓰레드 정보, 클래스 이름 같은 부가 정보를 함께 볼 수 있고, 출력 모양을 조정할 수 있습니다.
->> - 로그 레벨에 따라 개발 서버에서는 모든 로그를 출력하고, 운영 서버에서는 출력하지 않는 등 로그를 상황에 맞게 조절할 수 있습니다.   
->> - 시스템 아웃 콘솔에만 출력하는 것이 아니라, 파일이나 네트워크 등, 로그를 별도의 위치에 남길 수 있습니다. 특히 파일로 남길 때는 일별, 특정 용량에 따라 로그를 분할하는 것도 가능합니다.   
->> - 성능도 일반 System.out보다 좋습니다.(내부 버퍼링, 멀티 쓰레드 등등) 그래서 실무에서는 꼭 로그를 사용해야 합니다.         
->>          
->> [스프링 부트가 제공하는 로그 기능 reference](https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/) (logging 검색)
+>> 뷰: <code>org.springframework.web.servlet.View</code>         
+>     
+>> #### RequestMappingHandlerAdapter 동작 방식     
+>> <img width="913" alt="image" src="https://user-images.githubusercontent.com/66030601/228176492-cda7850d-0f5a-4cac-987d-e564cc7e299c.png">       
 >>      
->> --------------------     
+>> #### ArgumentResolver    
+>> 애노테이션 기반의 컨트롤러는 매우 다양한 파라미터를 사용할 수 있습니다.    
+>> <code>HttpServlet</code> , <code>Model</code>은 물론이고, <code>@RequestParam</code>, <code>@ModelAttribute</code> 같은 애노테이션, 그리고 <code>@RequestBody</code>, <code>HttpEntity</code> 같은 HTTP 메시지를 처리하는 부분까지 매우 큰 유연합니다.    
+>> 이렇게 파라미터를 유연하게 처리할 수 있는 이유가 바로 <code>ArgumentResolver</code> 덕분입니다.   
+>>     
+>> 애노테이션 기반 컨트롤러를 처리하는 <code>RequestMappingHandlerAdapter</code>는 바로 이 <code>ArgumentResolver</code>를 호출해서 컨트롤러(핸들러)가 필요로 하는 다양한 파라미터의 값(객체)을 생성합니다.    
+>> 그리고 파라미터의 값이 모두 준비되면 컨트롤러를 호출하면서 값을 넘겨줍니다.      
+>>      
+>> ※ 가능한 파라미터 목록은 다음 [공식 메뉴얼](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-arguments) 에서 확인 할 수 있습니다    
+>>     
+>> 정확히는 <code>HandlerMethodArgumentResolver</code>인데 줄여서 <code>ArgumentResolver</code>라고 부릅니다.    
+>>         
+>> #### <code>ArgumentResolver</code>의 동작 방식을 살펴보도록 하겠습니다.
+>> <code>ArgumentResolver</code>의 <code>supportsParameter()</code>를 호출해서 해당 파라미터를 지원하는지 체크하고, 지원하면 <code>resolveArgument()</code>를 호출해서 실제 객체를 생성합니다.      
+>> 그리고, ,원한다면 직접 이 인터페이스를 확장해서 원하는 <code>ArgumentResolver</code>를 만들 수도 있습니다.
+>>        
+>> #### ReturnValueHanlder    
+>> <code>HandlerMethodReturnValueHandler</code>를 줄여서 <code>ReturnValueHandler</code>라 부릅니다.    
+>> <code>ArgumentResolver</code>와 비슷한데, 이것은 응답 값을 변환하고 처리합니다.    
+>>     
+>> 컨트롤레엇 String으로 뷰 이름을 반환해도, 동작하는 이유가 바로 ReturnValueHandler 덕분입니다.     
+>>    
+>> ※ 가능한 응답 값 목록은 다음 [공식 메뉴얼](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-return-types) 에서 확인 할 수 있습니다.
+>
+>> #### HTTP 메시지 컨버터     
+>> #### HTTP 메시지 컨버터 위치 
+>> <img width="912" alt="image" src="https://user-images.githubusercontent.com/66030601/228183941-583f8b92-2425-4dc2-9b74-7b91652fd609.png">      
+>> 
+>> HTTP 메시지 컨버터는 어디에 있을까요?   
+>> 그림에서 볼 수 있듯이,    
+>> #### 요청의 경우,       
+>> <code>@RequestBody</code>를 처리하는 <code>ArgumentResolver</code>가 있고, <code>HttpEntity</code>를 처리하는 <code>ArgumentResolver</code>가 있습니다.    
+>> 이 <code>ArgumentResolver</code>들이 HTTP 메시지 컨버트를 사용해서 필요한 객체를 생성하는 것입니다.     
+>>    
+>> #### 응답의 경우,          
+>> <code>@ResponseBody</code>와 <code>HttpEntity</code>를 처리하는 <code>ReturnValueHandler</code>가 있습니다.      
+>> 그리고 여기에서 HTTP 메시지 컨버터를 호출해서 응답 결과를 만듭니다.      
+>>      
+>> 스프링 MVC는 <code>@RequestBody</code>, <code>@ResponseBody</code>가 있으면 <code>RequestResponseBodyMethodProcessor(ArgumentResolver)</code>,    
+> <code>HttpEntityMethodProcessor(ArgumentResolver)</code>를 사용합니다.      
+>>     
+>> #### 확장
+>> 스프링은 다음을 모두 인터페이스로 제공합니다. 따라서 필요하면 언제든지 기능을 확장할 수 있습니다.   
+>> - <code>HandlerMethodArgumentResolver</code>
+>> - <code>HandlerMethodReturnValueHandler</code>
+>> - <code>HttpMessageConverter</code>   
+>>    
+>> 스프링이 필요한 대부분의 기능을 제공하기 때문에 실제 기능을 확장할 일이 많지는 않습니다. 기능 확장은 <code>WebMvcConfigurer</code>를 상속받아서 스프링 빈으로 등록하면 됩니다.   
+>> 실제 자주 사용하지는 않으니 실제 기능 확장이 필요할 때 <code>WebMvcConfigurer</code>를 검색해보면 됩니다.       
+> 
+> --------------------     
 > 스프링을 이용해서 웹 어플리케이션을 개발하려면, 스프링 MVC의 핵심 구조를 제대로 파악해야 합니다.   
 > 
 > 그런데 스프링 MVC에는 수 많은 기능들이 자동화되고, 추상화되어 있기 떄문에 핵심 구조를 파악하기가 쉽지 않습니다.      
