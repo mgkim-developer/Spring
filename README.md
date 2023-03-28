@@ -152,6 +152,61 @@
 >> 핸들러 어댑터: <code>org.springframework.web.servlet.HandlerAdapter</code>      
 >> 뷰 리졸버: <code>org.springframework.web.servlet.ViewResolver</code>        
 >> 뷰: <code>org.springframework.web.servlet.View</code>
+> 
+>>
+>> #### RequestMappingHandlerAdapter 동작 방식
+>> <img width="913" alt="image" src="https://user-images.githubusercontent.com/66030601/228176492-cda7850d-0f5a-4cac-987d-e564cc7e299c.png">       
+>>
+>> #### ArgumentResolver
+>> 애노테이션 기반의 컨트롤러는 매우 다양한 파라미터를 사용할 수 있습니다.    
+>> <code>HttpServlet</code> , <code>Model</code>은 물론이고, <code>@RequestParam</code>, <code>@ModelAttribute</code> 같은 애노테이션, 그리고 <code>@RequestBody</code>, <code>HttpEntity</code> 같은 HTTP 메시지를 처리하는 부분까지 매우 큰 유연합니다.    
+>> 이렇게 파라미터를 유연하게 처리할 수 있는 이유가 바로 <code>ArgumentResolver</code> 덕분입니다.
+>>
+>> 애노테이션 기반 컨트롤러를 처리하는 <code>RequestMappingHandlerAdapter</code>는 바로 이 <code>ArgumentResolver</code>를 호출해서 컨트롤러(핸들러)가 필요로 하는 다양한 파라미터의 값(객체)을 생성합니다.    
+>> 그리고 파라미터의 값이 모두 준비되면 컨트롤러를 호출하면서 값을 넘겨줍니다.
+>>
+>> ※ 가능한 파라미터 목록은 다음 [공식 메뉴얼](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-arguments) 에서 확인 할 수 있습니다
+>>
+>> 정확히는 <code>HandlerMethodArgumentResolver</code>인데 줄여서 <code>ArgumentResolver</code>라고 부릅니다.
+>>
+>> #### <code>ArgumentResolver</code>의 동작 방식을 살펴보도록 하겠습니다.
+>> <code>ArgumentResolver</code>의 <code>supportsParameter()</code>를 호출해서 해당 파라미터를 지원하는지 체크하고, 지원하면 <code>resolveArgument()</code>를 호출해서 실제 객체를 생성합니다.      
+>> 그리고, ,원한다면 직접 이 인터페이스를 확장해서 원하는 <code>ArgumentResolver</code>를 만들 수도 있습니다.
+>>
+>> #### ReturnValueHanlder
+>> <code>HandlerMethodReturnValueHandler</code>를 줄여서 <code>ReturnValueHandler</code>라 부릅니다.    
+>> <code>ArgumentResolver</code>와 비슷한데, 이것은 응답 값을 변환하고 처리합니다.
+>>
+>> 컨트롤레엇 String으로 뷰 이름을 반환해도, 동작하는 이유가 바로 ReturnValueHandler 덕분입니다.
+>>
+>> ※ 가능한 응답 값 목록은 다음 [공식 메뉴얼](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-return-types) 에서 확인 할 수 있습니다.
+>
+>> #### HTTP 메시지 컨버터
+>> #### HTTP 메시지 컨버터 위치
+>> <img width="912" alt="image" src="https://user-images.githubusercontent.com/66030601/228183941-583f8b92-2425-4dc2-9b74-7b91652fd609.png">      
+>>
+>> HTTP 메시지 컨버터는 어디에 있을까요?   
+>> 그림에서 볼 수 있듯이,
+>> #### 요청의 경우,
+>> <code>@RequestBody</code>를 처리하는 <code>ArgumentResolver</code>가 있고, <code>HttpEntity</code>를 처리하는 <code>ArgumentResolver</code>가 있습니다.    
+>> 이 <code>ArgumentResolver</code>들이 HTTP 메시지 컨버트를 사용해서 필요한 객체를 생성하는 것입니다.
+>>
+>> #### 응답의 경우,
+>> <code>@ResponseBody</code>와 <code>HttpEntity</code>를 처리하는 <code>ReturnValueHandler</code>가 있습니다.      
+>> 그리고 여기에서 HTTP 메시지 컨버터를 호출해서 응답 결과를 만듭니다.
+>>
+>> 스프링 MVC는 <code>@RequestBody</code>, <code>@ResponseBody</code>가 있으면 <code>RequestResponseBodyMethodProcessor(ArgumentResolver)</code>,    
+> <code>HttpEntityMethodProcessor(ArgumentResolver)</code>를 사용합니다.
+>>
+>> #### 확장
+>> 스프링은 다음을 모두 인터페이스로 제공합니다. 따라서 필요하면 언제든지 기능을 확장할 수 있습니다.
+>> - <code>HandlerMethodArgumentResolver</code>
+>> - <code>HandlerMethodReturnValueHandler</code>
+>> - <code>HttpMessageConverter</code>
+>>
+>> 스프링이 필요한 대부분의 기능을 제공하기 때문에 실제 기능을 확장할 일이 많지는 않습니다. 기능 확장은 <code>WebMvcConfigurer</code>를 상속받아서 스프링 빈으로 등록하면 됩니다.   
+>> 실제 자주 사용하지는 않으니 실제 기능 확장이 필요할 때 <code>WebMvcConfigurer</code>를 검색해보면 됩니다.
+>
 >       
 > 스프링을 이용해서 웹 어플리케이션을 개발하려면, 스프링 MVC의 핵심 구조를 제대로 파악해야 합니다.
 >
