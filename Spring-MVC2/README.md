@@ -229,7 +229,7 @@
 >> 이렇게 둘을 함께 사용해보면서 각각의 장단점을 명확히 이해할 수 있습니다.
 >
 >> #### 예외 처리
->> ![image](https://user-images.githubusercontent.com/66030601/229278497-7d198b6c-1d76-4b96-a3f3-287375b1bbf9.png)
+>> ![image](https://user-images.githubusercontent.com/66030601/229278497-7d198b6c-1d76-4b96-a3f3-287375b1bbf9.png)   
 >> 웹 애플리케이션을 학습할 때 가장 이해하기 어려운 부분이 바로 예외 처리(Exception Handling)입니다.    
 >> 왜냐하면 서블릿 컨테이너(WAS)와 스프링 MVC가 각각 나름의 예외 처리 방법을 제공하기 떄문입니다.   
 >> 그리고 실제로 이 둘이 섞여서 복잡하게 예외 처리 매커니즘이 동작합니다.   
