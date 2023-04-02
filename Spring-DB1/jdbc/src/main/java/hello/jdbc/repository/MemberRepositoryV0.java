@@ -65,6 +65,48 @@ public class MemberRepositoryV0 {
         }
     }
 
+    public void update(String memberId, int money) throws SQLException {
+        String sql = "update member set money=? where member_id=?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);  // SQL Injection 공격을 예방하려면 PreparedStatement의 ?를 통한 파라미터 바인딩 방식을 사용해야함.
+            pstmt.setInt(1, money);
+            pstmt.setString(2, memberId);
+            int resultSize = pstmt.executeUpdate(); // executeUpdate()는 쿼리를 실행하고 영향받은 row 수를 반환. 여기서는 하나의 데이터만 변경하기 때문에 결과가 1이 반환
+            log.info("resultSize={}", resultSize);
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, null);
+        }
+
+    }
+
+    public void delete(String memberId) throws SQLException {
+        String sql = "delete from member where member_id=?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);  // SQL Injection 공격을 예방하려면 PreparedStatement의 ?를 통한 파라미터 바인딩 방식을 사용해야함.
+            pstmt.setString(1, memberId);
+            pstmt.executeUpdate(); // executeUpdate()는 쿼리를 실행하고 영향받은 row 수를 반환. 여기서는 하나의 데이터만 변경하기 때문에 결과가 1이 반환
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, null);
+        }
+    }
+
+
     private void close(Connection con, Statement stmt, ResultSet rs) {
 
         if (rs != null) {
