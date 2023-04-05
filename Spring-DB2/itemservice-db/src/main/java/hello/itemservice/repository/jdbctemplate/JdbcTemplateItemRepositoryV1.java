@@ -60,7 +60,7 @@ public class JdbcTemplateItemRepositoryV1 implements ItemRepository {
 
     @Override
     public Optional<Item> findById(Long id) {
-        String sql = "select id, item_name, price, quantity from item where id =?";
+        String sql = "select id, item_name, price, quantity from item where id = ?";
         try {
             Item item = template.queryForObject(sql, itemRowMapper(), id);
             return Optional.of(item);
@@ -74,7 +74,7 @@ public class JdbcTemplateItemRepositoryV1 implements ItemRepository {
         String itemName = cond.getItemName();
         Integer maxPrice = cond.getMaxPrice();
 
-        String sql = "select id, item_name, price, quantity from item = ";
+        String sql = "select id, item_name, price, quantity from item";
 
         // 동적 쿼리
         if (StringUtils.hasText(itemName) || maxPrice != null) {
@@ -84,7 +84,7 @@ public class JdbcTemplateItemRepositoryV1 implements ItemRepository {
         boolean andFlag = false;
         List<Object> param = new ArrayList<>();
         if (StringUtils.hasText(itemName)) {
-            sql += "item_name like concat('%', ?, '%')";
+            sql += " item_name like concat('%', ?, '%')";
             param.add(itemName);
             andFlag = true;
         }
