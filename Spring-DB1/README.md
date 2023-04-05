@@ -491,7 +491,7 @@
 >>     
 >> 어떤 트랜잭션 매니저를 선택할지는 현재 등록된 라이브러리를 보고 판단하는데, JDBC를 기술로 사용하면 <code>DataSourceTransactionManager</code>를 빈으로 등록하고, JPA를 사용하면 <code>JpaTransactionManager</code>를 등록합니다.    
 >> 둘 다 사용하는 경우 <code>JpaTransactionManager를 등록합니다.</code>
->> 참고로 <code>JpaTransactionManager</code>는 <code>DataSourceTransactionManager</code>가 제공하는 기능도 대부분        
+>> 참고로 <code>JpaTransactionManager</code>는 <code>DataSourceTransactionManager</code>가 제공하는 기능도 대부분 지원합니다.    
 >>      
 >> 정리     
 >> - 데이터소스와 트랜잭션 매니저는 스프링 부트가 제공하는 자동 빈 등록 기능을 사용하는 것이 편리합니다.   
