@@ -65,7 +65,7 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("itemName", updateParam.getItemName())
                 .addValue("price", updateParam.getPrice())
-                .addValue("id", itemId);
+                .addValue("id", itemId);    // Item 객체와 달리 DTO객체에서는 id 부분이 별도로 필요하다. 그래서 자바빈 프로퍼티 규약을 통해서 자동으로 파라미터 객체를 생성해주는 BeanPropertySqlParameterSource를 사용할 수 없다.
         template.update(sql, param);
     }
 
