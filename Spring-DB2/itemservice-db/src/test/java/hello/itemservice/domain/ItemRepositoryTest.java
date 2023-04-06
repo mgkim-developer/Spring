@@ -60,7 +60,7 @@ class ItemRepositoryTest {
     }
 
     @Test
-    @Commit // JPA의 1차 캐시와 동일성 보장 성능최적화 때문에 캐시쓰는 부분에서 로그가 안찍히므로 해당 로그를 보려면 @Commit 을 찍어줘야함.
+    @Commit // 트랜잭션 커밋 시점에 JPA가 변경된 엔티티 객체를 찾아서 UPDATE SQL을 수행한다. 그런데, 테스트의 경우 마지막에 트랜잭션이 롤백되기 때문에 JPA는 UPDATE SQL을 실행하지 않는다. 따라서 테스트에서 UPDATE SQL을 확인하려면 @Commit을 붙여야 한다.
     void updateItem() {
         //given
         Item item = new Item("item1", 10000, 10);
